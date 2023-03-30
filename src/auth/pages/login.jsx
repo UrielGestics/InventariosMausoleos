@@ -15,16 +15,17 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 
 export const Login = () => {
-    const [obscuro, setobscuro] = useState('dark')
-
-    const [showPassword, setshowPassword] = useState(false)
 
     const handleClickShowPassword = () => setshowPassword((show) => !show);
 
     const handleMouseDownPassword = (event) => {
       event.preventDefault();
     };
-  
+
+    //Modo Oscuro
+    const [obscuro, setobscuro] = useState('dark')
+
+    const [showPassword, setshowPassword] = useState(false)
 
     const validarModoOscuro = () => {
         if(localStorage.oscuro == 'true') {
@@ -60,7 +61,7 @@ const cambiarModo = () =>{
     {/* <Button variant="contained" onClick={cambiarModo}>C</Button> */}
     <Grid container spacing={2} style={{marginTop:'5%', width: '99%'}}>
       {/* Imagen */}
-  <Grid item md={9} lg={6} xl={5} onClick={cambiarModo}>
+  <Grid item md={9} lg={6} xl={5} >
     <img style={{width: '100%'}} src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
           className="img-fluid"></img>
   </Grid>

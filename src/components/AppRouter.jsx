@@ -13,6 +13,7 @@ export const AppRouter = () => {
         {/* <Route path="inicio" element= {<PreAltaEmpleadosApp />}></Route>
         <Route path="editarPreAlta/:id" element = {<EditarPreAlta />}></Route> */}
         {/* </Route> */}
+        <Route path="/" element = {<Navigate to='/login' />}></Route>
         <Route  path="login" element = {<Login />}></Route>
     </Routes>
     </>

@@ -12,6 +12,13 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+//SweetAlert
+import Swal from 'sweetalert2';
+
+//Funciones Propias
+import { apiURL } from '../../functiones'
+
+
 
 
 export const Login = () => {
@@ -54,13 +61,26 @@ const cambiarModo = () =>{
    }
 }
 
+const iniciarSesion = () =>{
+  const email = document.getElementById("email").value;
+  const clave = document.getElementById("clave").value;
+
+  if(email == '' || clave == ''){
+    Swal.fire(
+      'error',
+      'Tienes que proporcionar el correo y la contraseña',
+      'error'
+    )
+  }
+}
+
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
     {/* <Button variant="contained" onClick={cambiarModo}>C</Button> */}
     <Grid container spacing={2} style={{marginTop:'5%', width: '99%'}}>
       {/* Imagen */}
-  <Grid item md={9} lg={6} xl={5} onClick={cambiarModo}>
+  <Grid item md={9} lg={6} xl={5} >
     <img style={{width: '100%'}} src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
           className="img-fluid"></img>
   </Grid>
@@ -96,7 +116,7 @@ const cambiarModo = () =>{
         </FormControl>
            
         <FormControl fullWidth sx={{ m: -1,  }} style={{marginTop: '82px'}} >
-        <Button variant="contained" size="large"><b>Iniciar Sesion</b></Button>
+        <Button onClick={iniciarSesion} variant="contained" size="large"><b>Iniciar Sesion</b></Button>
         </FormControl>
 
   </Grid>

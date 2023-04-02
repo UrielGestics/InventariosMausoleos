@@ -18,13 +18,24 @@ import Swal from 'sweetalert2';
 //Funciones Propias
 import { apiURL } from '../../functiones'
 
+//Navegación
+import { useNavigate } from 'react-router-dom';
 
 
 
 export const Login = () => {
+  const navigate = useNavigate();
+
     const [obscuro, setobscuro] = useState('dark')
 
     const [showPassword, setshowPassword] = useState(false)
+
+    useEffect(() => {
+      if(localStorage.logged){
+        navigate('/inicio')
+      }
+    })
+    
 
     const handleClickShowPassword = () => setshowPassword((show) => !show);
 
@@ -69,6 +80,38 @@ const iniciarSesion = () =>{
     Swal.fire(
       'error',
       'Tienes que proporcionar el correo y la contraseña',
+      'error'
+    )
+  }
+  else if(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)){
+    let formData = new FormData();
+    formData.append("tipo", "login");
+    formData.append("correo", email);
+    formData.append("Clave", clave);
+  
+  
+    fetch(`${apiURL}usuarios.php`,{
+      method: 'POST',
+      body: formData
+    })
+    .then(async(resp) =>{
+      const finalResp = await resp.json();
+      if(!finalResp.estatus){
+        Swal.fire(
+          'Error',
+          finalResp.mensaje,
+          'error'
+        )
+      }else{
+        localStorage.id = finalResp[0][0].ID;
+        localStorage.logged = true;
+        navigate('/inicio')
+      }
+    })
+  }else{
+    Swal.fire(
+      'error',
+      'Tienes que proporcionar el correo correcto',
       'error'
     )
   }

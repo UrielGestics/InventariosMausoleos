@@ -24,11 +24,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 export const Login = () => {
+
   const navigate = useNavigate();
-
-    const [obscuro, setobscuro] = useState('dark')
-
-    const [showPassword, setshowPassword] = useState(false)
 
     useEffect(() => {
       if(localStorage.logged){
@@ -42,7 +39,11 @@ export const Login = () => {
     const handleMouseDownPassword = (event) => {
       event.preventDefault();
     };
-  
+
+    //Modo Oscuro
+    const [obscuro, setobscuro] = useState('dark')
+
+    const [showPassword, setshowPassword] = useState(false)
 
     const validarModoOscuro = () => {
         if(localStorage.oscuro == 'true') {

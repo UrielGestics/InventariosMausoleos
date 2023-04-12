@@ -62,15 +62,6 @@ const darkTheme = createTheme({
     },
 });
 
-const cambiarModo = () =>{
-   if(localStorage.oscuro == 'true'){
-    localStorage.oscuro = 'false'
-    setobscuro('light')
-   }else{
-    localStorage.oscuro = 'true'
-    setobscuro('dark')
-   }
-}
 
 const iniciarSesion = () =>{
   const email = document.getElementById("email").value;

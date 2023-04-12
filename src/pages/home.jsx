@@ -25,10 +25,11 @@ import MailIcon from '@mui/icons-material/Mail';
 import { BarraSuperior }  from '../components/barraSuperios';
 
 
-
 export const Home = () => {
 
     const [obscuro, setobscuro] = useState('dark')
+
+    
 
     const validarModoOscuro = () => {
         if(localStorage.oscuro == 'true') {
@@ -66,6 +67,7 @@ export const Home = () => {
         <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <BarraSuperior />
+      
       
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />

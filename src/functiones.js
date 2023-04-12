@@ -1,1 +1,1 @@
-export const apiURL = 'http://localhost/InventariosMausoleosBackEnd/';
+export const apiURL = 'http://inventariosmausoleos.com/InventariosMausoleosBackEnd/';

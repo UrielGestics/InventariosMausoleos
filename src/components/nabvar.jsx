@@ -13,15 +13,36 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
-//MaterialUI Icons
-// import AirplayIcon from '@mui/icons-material/Airplay';
+//FONT Awesome Icons
 
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+
+
 
 const drawerWidth = 240;
 
+const arregloIconos = ['bi bi-emoji-sunglasses','bi bi-archive','bi bi-geo-alt','bi bi-file-bar-graph-fill']
+const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
+
+const mOscuro = localStorage.oscuro
+
+
+
+
 export const Nabvar = () => {
+
+  
+const cambiarModo = () =>{
+  if(localStorage.oscuro == 'true'){
+   localStorage.oscuro = 'false'
+   setobscuro('light')
+  }else{
+   localStorage.oscuro = 'true'
+   setobscuro('dark')
+  }
+}
+
   return (
     <Drawer
         variant="permanent"
@@ -34,11 +55,19 @@ export const Nabvar = () => {
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
+          {/* <ListItem key={'Inventarios'}>
+          <ListItemButton>
+                  <ListItemIcon>
+                  <MailIcon /> 
+                  </ListItemIcon>
+                  <ListItemText primary={'Inventarios'} />
+                </ListItemButton>
+          </ListItem> */}
             {['Administrador','Inventarios', 'Sucursal', 'Reportes'].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  <i className={arregloIconos[index]}></i>
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
@@ -47,11 +76,11 @@ export const Nabvar = () => {
           </List>
           <Divider />
           <List>
-            {[ 'Perfil', 'Salir'].map((text, index) => (
+            {['Modo Oscuro', 'Perfil', 'Salir'].map((text, index) => (
               <ListItem key={text} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {(index == 0) ?(mOscuro == 'true') ?<i onClick={cambiarModo} className='bi bi-toggle-on'></i> : <i onClick={cambiarModo} className='bi bi-toggle-off'></i> : <i className={arregloIconos2[index]}></i>}
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>

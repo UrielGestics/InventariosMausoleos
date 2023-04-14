@@ -14,7 +14,7 @@ import Typography from '@mui/material/Typography';
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
 
-export const Home = () => {
+export const Invetarios = () => {
     const [obscuro, setobscuro] = useState()
     const darkTheme = createTheme({
         palette: {
@@ -47,12 +47,12 @@ export const Home = () => {
         }
     }
 
-    return (
-        <ThemeProvider theme={darkTheme} >
+  return (
+       <ThemeProvider theme={darkTheme} >
         <CssBaseline />
         <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <BarraSuperior pag='Administrador' />
+      <BarraSuperior pag='Inventarios' />
       
       
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -87,6 +87,5 @@ export const Home = () => {
       </Box>
     </Box>
         </ThemeProvider>
-    );
+  )
 }
-

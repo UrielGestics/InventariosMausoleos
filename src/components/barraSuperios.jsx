@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 //Mis Componentes
 import { Nabvar } from '../components/nabvar'
 
-export const BarraSuperior = () => {
+export const BarraSuperior = ({pag}) => {
   return (
     <>
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -18,7 +18,7 @@ export const BarraSuperior = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-    <Nabvar />
+    <Nabvar active={pag} />
     </>
     
       

@@ -108,15 +108,15 @@ const iniciarSesion = () =>{
     )
   }
 }
-
+const mOscuro = localStorage.oscuro
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
     {/* <Button variant="contained" onClick={cambiarModo}>C</Button> */}
     <Grid container spacing={2} style={{marginTop:'5%', width: '99%'}}>
       {/* Imagen */}
-  <Grid item md={9} lg={6} xl={5} >
-    <img style={{width: '100%'}} src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+  <Grid item md={9} lg={6} xl={6} xs={12} sm={12} >
+    <img style={{width: '534px'}} src="https://inventariosmausoleos.com/assets/logoMausoleos.png"
           className="img-fluid"></img>
   </Grid>
   {/* Formulario */}
@@ -151,7 +151,7 @@ const iniciarSesion = () =>{
         </FormControl>
            
         <FormControl fullWidth sx={{ m: -1,  }} style={{marginTop: '82px'}} >
-        <Button onClick={iniciarSesion} variant="contained" size="large"><b>Iniciar Sesion</b></Button>
+        <Button onClick={iniciarSesion} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} size="large"><b>Iniciar Sesion</b></Button>
         </FormControl>
 
   </Grid>

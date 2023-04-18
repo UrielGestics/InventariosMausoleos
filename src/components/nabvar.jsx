@@ -87,6 +87,20 @@ const cambiarModo = () =>{
             ))}
           </List>
           <Divider />
+          <h4 style={{textAlign: 'center'}}>Configuraciones</h4>
+          <List>
+          {['Proveedores', 'Materiales', 'Colores', 'Tonalidades'].map((text, index) => (
+              <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <i className={arregloIconosInventarios[index]} style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}></i>
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
           <List>
             {['Modo Oscuro', 'Perfil', 'Salir'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={(index == 0) ? cambiarModo : () =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>

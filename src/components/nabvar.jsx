@@ -15,7 +15,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
-
+//50
 const arregloIconos = ['bi bi-emoji-sunglasses','bi bi-geo-alt','bi bi-file-bar-graph-fill']
 const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
 const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
@@ -73,6 +73,7 @@ const cambiarModo = () =>{
             ))}
           </List>
           <Divider />
+          <i className="bi bi-arrows-angle-contract"></i>
           <h4 style={{textAlign: 'center'}}>Inventarios</h4>
           <List>
           {['Captura', 'Recepción', 'Consulta', 'Movimientos'].map((text, index) => (

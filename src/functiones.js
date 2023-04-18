@@ -1,7 +1,7 @@
 //Tema
 import { createTheme } from '@mui/material/styles';
 
-export const apiURL = 'http://inventariosmausoleos.com/InventariosMausoleosBackEnd/';
+export const apiURL = 'https://inventariosmausoleos.com/InventariosMausoleosBackEnd/';
 
 let obscuro = '';
 

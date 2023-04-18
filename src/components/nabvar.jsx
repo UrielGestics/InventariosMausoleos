@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 //MaterialUI
 import Box from '@mui/material/Box';
@@ -10,6 +10,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import AppBar from '@mui/material/AppBar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 //Navegación
 import { useNavigate } from 'react-router-dom';
@@ -24,7 +27,22 @@ const mOscuro = localStorage.oscuro
 
 export const Nabvar = ({active}) => {
 
+  const [cambiartamano, setcambiartamano] = useState(50)
+
   const navigate = useNavigate();
+
+  const validarDispositivo = () =>{
+    if( navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i)|| navigator.userAgent.match(/Windows Phone/i)){
+      setcambiartamano(50)
+     }else{
+       setcambiartamano(240)
+     }
+  }
+
+  useEffect(() => {
+    validarDispositivo()
+  }, [])
+  
 
 const irAPag = (text) =>{
   if(text == 'Salir'){
@@ -49,13 +67,29 @@ const cambiarModo = () =>{
   window.location.reload()
 }
 
+const cambiartamanof = () =>{
+  if(cambiartamano == 240){
+    setcambiartamano(50)
+  }else{
+    setcambiartamano(240)
+  }
+}
+
   return (
-    <Drawer
+    <>
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Toolbar>
+          <Typography variant="h6" noWrap component="div">
+          <Button onClick={cambiartamanof}><i style={{color: 'white', fontSize: '20px'}} class="bi bi-justify"></i></Button> <label>Inventarios Mausoleos</label>
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
         variant="permanent"
         sx={{
-          width: drawerWidth,
+          width: cambiartamano,
           flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+          [`& .MuiDrawer-paper`]: { width: cambiartamano, boxSizing: 'border-box' },
         }}
       >
         <Toolbar />
@@ -73,8 +107,7 @@ const cambiarModo = () =>{
             ))}
           </List>
           <Divider />
-          <i className="bi bi-arrows-angle-contract"></i>
-          <h4 style={{textAlign: 'center'}}>Inventarios</h4>
+          <h4 style={{textAlign: 'center'}}> { ( cambiartamano == 240) ? 'Inventarios' : ''}</h4>
           <List>
           {['Captura', 'Recepción', 'Consulta', 'Movimientos'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
@@ -88,7 +121,7 @@ const cambiarModo = () =>{
             ))}
           </List>
           <Divider />
-          <h4 style={{textAlign: 'center'}}>Configuraciones</h4>
+          <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Configuraciones' : ''}</h4>
           <List>
           {['Proveedores', 'Materiales', 'Colores', 'Tonalidades'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
@@ -116,6 +149,8 @@ const cambiarModo = () =>{
           </List>
         </Box>
       </Drawer>
+    </>
+    
 
   )
 }

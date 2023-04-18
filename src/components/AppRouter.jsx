@@ -5,6 +5,7 @@ import { Invetarios } from '../pages/invetarios'
 import { Sucursal } from '../pages/sucursal'
 import { Reportes } from '../pages/reportes'
 import { Perfil } from '../pages/perfil'
+import { Captura } from '../pages/captura'
 
 export const AppRouter = () => {
   return (
@@ -17,6 +18,7 @@ export const AppRouter = () => {
       <Route  path="Sucursal" element = {<Sucursal />}></Route>
       <Route  path="Reportes" element = {<Reportes />}></Route>
       <Route  path="Perfil" element = {<Perfil />}></Route>
+      <Route  path="Captura" element = {<Captura />}></Route>
     </Routes>
     </>
   )

@@ -13,8 +13,7 @@ import Typography from '@mui/material/Typography';
 
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
-
-export const Invetarios = () => {
+export const Captura = () => {
     const [obscuro, setobscuro] = useState()
     const darkTheme = createTheme({
         palette: {
@@ -52,7 +51,7 @@ export const Invetarios = () => {
         <CssBaseline />
         <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <BarraSuperior pag='Inventarios' />
+      <BarraSuperior pag='Captura' />
       
       
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

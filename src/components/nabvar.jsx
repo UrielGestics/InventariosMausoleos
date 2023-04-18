@@ -16,8 +16,9 @@ import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
-const arregloIconos = ['bi bi-emoji-sunglasses','bi bi-archive','bi bi-geo-alt','bi bi-file-bar-graph-fill']
+const arregloIconos = ['bi bi-emoji-sunglasses','bi bi-geo-alt','bi bi-file-bar-graph-fill']
 const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
+const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
 
 const mOscuro = localStorage.oscuro
 
@@ -60,11 +61,25 @@ const cambiarModo = () =>{
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
           <List>
-            {['Administrador','Inventarios', 'Sucursal', 'Reportes'].map((text, index) => (
+            {['Administrador', 'Sucursal', 'Reportes'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
                 <ListItemButton>
                   <ListItemIcon>
                   <i className={arregloIconos[index]} style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}></i>
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <h4 style={{textAlign: 'center'}}>Inventarios</h4>
+          <List>
+          {['Captura', 'Recepción', 'Consulta', 'Movimientos'].map((text, index) => (
+              <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
+                <ListItemButton>
+                  <ListItemIcon>
+                  <i className={arregloIconosInventarios[index]} style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}></i>
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>

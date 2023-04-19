@@ -21,6 +21,9 @@ import Button from '@mui/material/Button';
 //SweetAlert
 import Swal from 'sweetalert2';
 
+//QRious
+import { QRious } from 'react-qrious'
+
 
 
 //Funciones Propias
@@ -43,6 +46,7 @@ export const Captura = () => {
     const [tonalidades, settonalidades] = useState([])
     const [tonalidadesNombre, settonalidadesNombre] = useState([])
     const [claveProducto, setclaveProducto] = useState('')
+    const [codQR, setcodQR] = useState('')
 
     const darkTheme = createTheme({
         palette: {
@@ -164,6 +168,27 @@ export const Captura = () => {
     }
 
     const generarCaptura = () =>{
+        let timerInterval
+Swal.fire({
+  title: 'Cargando',
+  html: `<div class="spinner-border" role="status">
+  <span class="sr-only">Loading...</span>
+</div>`,
+  timer: 2000,
+  timerProgressBar: true,
+  didOpen: () => {
+    Swal.showLoading()
+    
+    timerInterval = setInterval(() => {
+     
+    }, 100)
+  },
+  willClose: () => {
+    clearInterval(timerInterval)
+  }
+}).then((result) => {
+})
+
         let formData = new FormData();
         formData.append('pro',proveedoresNombre);
         formData.append('artProv',artProveedoresNombre);
@@ -186,14 +211,23 @@ export const Captura = () => {
             Swal.close()
             if(estatus == true){
               Swal.fire(
-                'Succes',
+                'Exito',
                 mensaje,
-                'Succes'
+                'success'
               )
+              setcodQR(claveProducto)
+            //   new QRious({
+            //     element: document.querySelector("#QRGenerado"),
+            //     value: id, // La URL o el texto
+            //     size: 500,
+            //     backgroundAlpha: 0, // 0 para fondo transparente
+            //     foreground: "black", // Color del QR
+            //     level: "H", // Puede ser L,M,Q y H (L es el de menor nivel, H el mayor)
+            // });
             }else{
               Swal.fire(
                 'Error',
-                'Hubo un error, por favor intentalo de nuevo',
+                mensaje,
                 'error'
               )
             }
@@ -201,10 +235,17 @@ export const Captura = () => {
           .catch(err => {
             Swal.fire(
               'Error',
-              'Hubo un error, por favor intentalo de nuevo',
+              'Hubo un error, por favor intentalo de nuevo 2',
               'error'
             )
           })
+    }
+
+    const imprimirQr = () =>{
+        var win = window.open('', '', 'height=700,width=700'); // Open the window. Its a popup window.
+            win.document.write(document.getElementById("mainImg").outerHTML);     // Write contents in the new window.
+            win.document.close();
+            win.print();     
     }
 
   return (
@@ -311,8 +352,13 @@ export const Captura = () => {
           <FilledInput value={1} type='number' id="numberCantidad"/>
       </FormControl>
       <hr />
-      <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button>         
+      {(codQR == '') ?'' :<QRious id="mainImg" value={codQR} size={250}  foreground='black' level='H' />}
+      {(codQR == '') ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
+      : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}
+     
 
+      
+  
       </Box>
     </Box>
         </ThemeProvider>

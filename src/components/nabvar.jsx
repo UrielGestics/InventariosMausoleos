@@ -80,7 +80,7 @@ const cambiartamanof = () =>{
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-          <Button onClick={cambiartamanof}><i style={{color: 'white', fontSize: '20px'}} class="bi bi-justify"></i></Button> <label>Inventarios Mausoleos</label>
+          <Button onClick={cambiartamanof}><i style={{color: 'white', fontSize: '20px'}} className="bi bi-justify"></i></Button> <label>Inventarios Mausoleos</label>
           </Typography>
         </Toolbar>
       </AppBar>

@@ -149,105 +149,101 @@ export const Captura = () => {
             })
     }
 
-    const actualizarClaveProducto = () =>{
-        //proveedoresNombre
-        const proveedor = proveedores.filter(pro => pro.ID_Proveedor == proveedoresNombre)
-        const artProveedor = artProveedores.filter(pro => pro.ID_ArticuloXProveedor == artProveedoresNombre)
-        const materiales = material.filter(mat => mat.ID_Material == materialNombre)
-        const color = colores.filter(col => col.ID_Color == coloresNombre)
-        const tona = tonalidades.filter(to => to.ID_Tonalidad == tonalidadesNombre)
-        if(proveedor.length > 0 && artProveedor.length > 0 && materiales.length > 0 && color.length > 0 && tona.length > 0){
-            setclaveProducto(proveedor[0].Nombre_Proveedor.substr(0,3) + '-' + artProveedor[0].Nombre_Articulo.substr(0,3)+'-'+materiales[0].Nombre_Material.substr(0,3)+'-'+color[0].Nombre_Color.substr(0,2)+tona[0].Nombre_Tonalidad.substr(0,1))
-        }else{
+    const generarCaptura = () =>{
+        if(document.getElementById('numberCantidad').value == 0 || document.getElementById('textNombreProducto').value == '' || proveedoresNombre == ''
+           || artProveedoresNombre == '' || materialNombre == '' || coloresNombre == '' || tonalidadesNombre == ''){
             Swal.fire(
                 'error',
-                'Tienes que llenar todos los datos para generar la clave',
+                'Tienes que llenar todos los campos',
                 'error'
               )
+        }else{
+            let timerInterval
+            Swal.fire({
+              title: 'Cargando',
+              html: `<div className="spinner-border" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>`,
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading()
+                
+                timerInterval = setInterval(() => {
+                 
+                }, 100)
+              },
+              willClose: () => {
+                clearInterval(timerInterval)
+              }
+            }).then((result) => {
+            })
+            const proveedor = proveedores.filter(pro => pro.ID_Proveedor == proveedoresNombre)
+                     const artProveedor = artProveedores.filter(pro => pro.ID_ArticuloXProveedor == artProveedoresNombre)
+                     const materiales = material.filter(mat => mat.ID_Material == materialNombre)
+                     const color = colores.filter(col => col.ID_Color == coloresNombre)
+                     const tona = tonalidades.filter(to => to.ID_Tonalidad == tonalidadesNombre)
+            
+                    
+                    let formData = new FormData();
+                    formData.append('pro',proveedoresNombre);
+                    formData.append('artProv',artProveedoresNombre);
+                    formData.append('materiales',materialNombre);
+                    formData.append('colores',coloresNombre);
+                    formData.append('tonalidades',tonalidadesNombre);
+                    formData.append('claveProducto',proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad);
+                    formData.append('nombreProducto',document.getElementById('textNombreProducto').value);
+                    formData.append('cantidad',document.getElementById('numberCantidad').value);
+                    formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
+                    formData.append('usuario',localStorage.id);
+                    formData.append('tipo','guardarCaptura');
+            
+                    fetch(`${apiURL}articulos.php`,{
+                        method: 'post',
+                        body: formData
+                    })
+                    .then(async(resp) => {
+                        const {estatus,mensaje} = await resp.json();
+                        Swal.close()
+                        if(estatus == true){
+                          Swal.fire(
+                            'Exito',
+                            mensaje,
+                            'success'
+                          )
+                          setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
+                        }else{
+                          Swal.fire(
+                            'Error',
+                            mensaje,
+                            'error'
+                          )
+                        }
+                      })
+                      .catch(err => {
+                        Swal.fire(
+                          'Error',
+                          'Hubo un error, por favor intentalo de nuevo 2'+err,
+                          'error'
+                        )
+                      })
         }
-    }
-
-    const generarCaptura = () =>{
-        let timerInterval
-Swal.fire({
-  title: 'Cargando',
-  html: `<div class="spinner-border" role="status">
-  <span class="sr-only">Loading...</span>
-</div>`,
-  timer: 2000,
-  timerProgressBar: true,
-  didOpen: () => {
-    Swal.showLoading()
-    
-    timerInterval = setInterval(() => {
-     
-    }, 100)
-  },
-  willClose: () => {
-    clearInterval(timerInterval)
-  }
-}).then((result) => {
-})
-
-        let formData = new FormData();
-        formData.append('pro',proveedoresNombre);
-        formData.append('artProv',artProveedoresNombre);
-        formData.append('materiales',materialNombre);
-        formData.append('colores',coloresNombre);
-        formData.append('tonalidades',tonalidadesNombre);
-        formData.append('claveProducto',claveProducto);
-        formData.append('nombreProducto',document.getElementById('textNombreProducto').value);
-        formData.append('cantidad',document.getElementById('numberCantidad').value);
-        formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
-        formData.append('usuario',localStorage.id);
-        formData.append('tipo','guardarCaptura');
-
-        fetch(`${apiURL}articulos.php`,{
-            method: 'post',
-            body: formData
-        })
-        .then(async(resp) => {
-            const {estatus,mensaje} = await resp.json();
-            Swal.close()
-            if(estatus == true){
-              Swal.fire(
-                'Exito',
-                mensaje,
-                'success'
-              )
-              setcodQR(claveProducto)
-            //   new QRious({
-            //     element: document.querySelector("#QRGenerado"),
-            //     value: id, // La URL o el texto
-            //     size: 500,
-            //     backgroundAlpha: 0, // 0 para fondo transparente
-            //     foreground: "black", // Color del QR
-            //     level: "H", // Puede ser L,M,Q y H (L es el de menor nivel, H el mayor)
-            // });
-            }else{
-              Swal.fire(
-                'Error',
-                mensaje,
-                'error'
-              )
-            }
-          })
-          .catch(err => {
-            Swal.fire(
-              'Error',
-              'Hubo un error, por favor intentalo de nuevo 2',
-              'error'
-            )
-          })
     }
 
     const imprimirQr = () =>{
         var win = window.open('', '', 'height=700,width=700'); // Open the window. Its a popup window.
             win.document.write(document.getElementById("mainImg").outerHTML);     // Write contents in the new window.
             win.document.close();
-            win.print();     
+            win.print();
+            win.addEventListener("afterprint", (event) => {
+                
+                setTimeout(() => {
+                  
+                    window.location.reload()
+                }, 1000);
+            })
     }
-
+    
   return (
        <ThemeProvider theme={darkTheme} >
         <CssBaseline />
@@ -260,9 +256,9 @@ Swal.fire({
         <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Proveedor</InputLabel>
         <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
-            {proveedores.map(({Nombre_Proveedor,ID_Proveedor}, idx) =>{
+            {proveedores.map(({Nombre_Proveedor,ID_Proveedor,Clave_Proveedor}, idx) =>{
                 return(
-                <MenuItem value={ID_Proveedor}>{Nombre_Proveedor}</MenuItem>
+                <MenuItem data-clave={Clave_Proveedor} key={ID_Proveedor} value={ID_Proveedor}>{Nombre_Proveedor} - {Clave_Proveedor}</MenuItem>
                 );
             })}
           
@@ -272,9 +268,9 @@ Swal.fire({
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Aritculo Del Proveedor</InputLabel>
         <Select labelId="labelArticuloProveedor" id="selectArticuloProveedor" label="Arituclo Del Proveedor" onChange={cambioSelectProveedoresArituclos}>
-            {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo}, idx) =>{
+            {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo }, idx) =>{
                 return(
-                <MenuItem value={ID_ArticuloXProveedor}>{Nombre_Articulo}</MenuItem>
+                <MenuItem key={ID_ArticuloXProveedor} value={ID_ArticuloXProveedor}>{Nombre_Articulo} - {Clave_Articulo}</MenuItem>
                 );
             })}
           
@@ -284,9 +280,9 @@ Swal.fire({
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Materiales</InputLabel>
         <Select labelId="labelMateriales" id="selectMateriales" label="Materiales" onChange={cambioSelectMateriales}>
-            {material.map(({ID_Material,Nombre_Material}, idx) =>{
+            {material.map(({ID_Material,Nombre_Material, Clave_Material}, idx) =>{
                 return(
-                <MenuItem value={ID_Material}>{Nombre_Material}</MenuItem>
+                <MenuItem key={ID_Material} value={ID_Material}>{Nombre_Material} - {Clave_Material}</MenuItem>
                 );
             })}
           
@@ -296,9 +292,9 @@ Swal.fire({
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Colores</InputLabel>
         <Select labelId="labelColores" id="selectColores" label="Colores" onChange={cambioSelectColores}>
-            {colores.map(({ID_Color,Nombre_Color}, idx) =>{
+            {colores.map(({ID_Color,Nombre_Color, Clave_Color}, idx) =>{
                 return(
-                <MenuItem value={ID_Color}>{Nombre_Color}</MenuItem>
+                <MenuItem key={ID_Color} value={ID_Color}>{Nombre_Color} - {Clave_Color}</MenuItem>
                 );
             })}
           
@@ -308,33 +304,13 @@ Swal.fire({
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Tonalidades</InputLabel>
         <Select labelId="labelTonalidades" id="selectTonalidades" label="Tonalidades" onChange={cambioSelectTonalidade}>
-            {tonalidades.map(({ID_Tonalidad,Nombre_Tonalidad}, idx) =>{
+            {tonalidades.map(({ID_Tonalidad,Nombre_Tonalidad, Clave_Tonalidad}, idx) =>{
                 return(
-                <MenuItem value={ID_Tonalidad}>{Nombre_Tonalidad}</MenuItem>
+                <MenuItem key={ID_Tonalidad} value={ID_Tonalidad}>{Nombre_Tonalidad} - {Clave_Tonalidad}</MenuItem>
                 );
             })}
           
         </Select>
-      </FormControl>
-      <hr />
-      <FormControl fullWidth>
-      <InputLabel >Clave Del Producto</InputLabel>
-          <FilledInput 
-          readOnly 
-          disabled 
-          value={claveProducto} 
-          id="textClaveProducto"
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                onClick={actualizarClaveProducto}
-                edge="end"
-              >
-                <i class="bi bi-arrow-clockwise"></i>
-              </IconButton>
-            </InputAdornment>
-          }
-          />
       </FormControl>
       <hr />
       <FormControl fullWidth>
@@ -349,10 +325,10 @@ Swal.fire({
       <hr />
       <FormControl fullWidth>
       <InputLabel >Cantidad</InputLabel>
-          <FilledInput value={1} type='number' id="numberCantidad"/>
+          <FilledInput id="numberCantidad" type='number'/>
       </FormControl>
       <hr />
-      {(codQR == '') ?'' :<QRious id="mainImg" value={codQR} size={250}  foreground='black' level='H' />}
+      {(codQR == '') ?'' :<QRious id="mainImg" value={codQR} size={250}  foreground='black' level='H'  />}
       {(codQR == '') ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
       : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}
      

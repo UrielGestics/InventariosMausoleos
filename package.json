@@ -25,6 +25,7 @@
         "prop-types": "^15.8.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-material-ui-searchbar": "^1.0.4",
         "react-qrious": "^2.5.6",
         "react-router-dom": "^6.9.0",
         "styled-components": "^5.3.9",

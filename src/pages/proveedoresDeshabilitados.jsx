@@ -66,7 +66,16 @@ export const ProveedoresDeshabilitados = () => {
     useEffect(() => {
         validarModoOscuro()
         obtenerProveedores()
+        validarNotLoggedPage()
     }, [])
+
+    const  validarNotLoggedPage = () => {
+      if (localStorage.logged == undefined) {
+          navigate('/login')
+      }
+  }
+
+    
 
       const obtenerProveedores = () =>{
         fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedoresDeshabilitados`)

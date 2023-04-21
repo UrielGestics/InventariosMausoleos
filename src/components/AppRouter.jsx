@@ -11,6 +11,8 @@ import { ProductosProveedor } from '../pages/productosProveedor'
 import { ProductosProveedorDeshabilitados } from '../pages/productosProveedorDeshabilitados'
 import { ProveedoresDeshabilitados } from '../pages/proveedoresDeshabilitados'
 import { Materiales } from '../pages/materiales'
+import { Colores } from '../pages/colores'
+import { Tonalidades } from '../pages/tonalidades'
 
 export const AppRouter = () => {
   return (
@@ -29,6 +31,8 @@ export const AppRouter = () => {
       <Route path="productosProveedorDeshabilitados/:id/:nombre" element = {<ProductosProveedorDeshabilitados />}></Route>
       <Route path="proveedoresDeshabilitados" element = {<ProveedoresDeshabilitados />}></Route>
       <Route path="Materiales" element = {<Materiales />}></Route>
+      <Route path="Colores" element = {<Colores />}></Route>
+      <Route path="Tonalidades" element = {<Tonalidades />}></Route>
     </Routes>
     </>
   )

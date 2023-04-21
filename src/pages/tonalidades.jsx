@@ -36,14 +36,12 @@ import { apiURL } from '../functiones'
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
 
-
-export const Proveedores = () => {
-  const navigate = useNavigate();
-
+export const Tonalidades = () => {
+ 
     const [obscuro, setobscuro] = useState()
-    const [proveedores, setproveedores] = useState([])
-    const [proveedoresCopia, setproveedoresCopia] = useState([])
-    const [cargandoproveedores, setCargandoproveedores] = useState(false)
+    const [tonalidades, settonalidades] = useState([])
+    const [tonalidadesCopia, settonalidadesCopia] = useState([])
+    const [cargandotonalidades, setCargandotonalidades] = useState(false)
     const [pg, setpg] = React.useState(0);
     const [rpg, setrpg] = React.useState(5);
 
@@ -65,23 +63,23 @@ export const Proveedores = () => {
 
     useEffect(() => {
         validarModoOscuro()
-        obtenerProveedores()
+        obtenertonalidades()
         validarNotLoggedPage()
     }, [])
-    
+
     const  validarNotLoggedPage = () => {
       if (localStorage.logged == undefined) {
           navigate('/login')
       }
   }
 
-      const obtenerProveedores = () =>{
-        fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedoresActivos`)
+      const obtenertonalidades = () =>{
+        fetch(`${apiURL}configuraciones.php?tipo=obtenerTodasTonalidades`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
-            setproveedores(finalResp[0])
-            setCargandoproveedores(true)
-            setproveedoresCopia(finalResp[0])
+            settonalidades(finalResp[0])
+            setCargandotonalidades(true)
+            settonalidadesCopia(finalResp[0])
         })
     } 
   
@@ -96,37 +94,37 @@ export const Proveedores = () => {
 
     const requestSearch = (texto) => {
         if(texto == ''){
-            obtenerProveedores()
+            obtenertonalidades()
         }else{
-            const filteredRows = proveedoresCopia.filter((row) => {
-                return row.Nombre_Proveedor.toLowerCase().includes(texto.toLowerCase())
+            const filteredRows = tonalidadesCopia.filter((row) => {
+                return row.Nombre_Tonalidad.toLowerCase().includes(texto.toLowerCase())
               });
-               setproveedores(filteredRows)
+              settonalidades(filteredRows)
         }
       }
 
-    const  editarProveedor = (ID_Proveedor,Nombre_Proveedor,Clave_Proveedor) =>{
+    const  editarTonalidad = (ID_Tonalidad,Nombre_Tonalidad,Clave_Tonalidad) =>{
         Swal.fire({
             allowOutsideClick: false,
-            title: `Modificar Proveedor ${Nombre_Proveedor}`,
-            html: `<label>Nombre Del Proveedor</label>
+            title: `Modificar Tonalidad ${Nombre_Tonalidad}`,
+            html: `<label>Nombre Del Tonalidad</label>
             <br />
-            <input type="text" id="nPro" class="swal2-input" value='${Nombre_Proveedor}' placeholder="Nombre Del Proveedor">
+            <input type="text" id="nTon" class="swal2-input" value='${Nombre_Tonalidad}' placeholder="Nombre Del Tonalidad">
             <br />
-            <label>Clave Del Proveedor</label>
+            <label>Clave Del Tonalidad</label>
             <br />
-            <input type="text" id="cPro" class="swal2-input" value='${Clave_Proveedor}' placeholder="Clave Del Proveedor">`,
+            <input type="text" id="cTon" class="swal2-input" value='${Clave_Tonalidad}' placeholder="Clave Del Tonalidad">`,
             confirmButtonText: 'Editar',
             showCancelButton: true,
             cancelButtonText: 'Cancelar'
           }).then((result) => {
             if(result.isDismissed){
-              Swal.fire('Accion Cancelada', 'No Se Edito El Proveedor', 'error')
+              Swal.fire('Accion Cancelada', 'No Se Edito El Tonalidad', 'error')
             }else{
               
-                const nPro = Swal.getPopup().querySelector('#nPro').value
-                const cPro = Swal.getPopup().querySelector('#cPro').value
-                if (!nPro || !cPro) {
+                const nTon = Swal.getPopup().querySelector('#nTon').value
+                const cTon = Swal.getPopup().querySelector('#cTon').value
+                if (!nTon || !cTon) {
                   Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
                 }else{
                   let timerInterval
@@ -150,13 +148,12 @@ export const Proveedores = () => {
               }).then((result) => {})
                   //Hacer Petición API
                   let formData = new FormData();
-                  formData.append("tipo","modificarProveedor")
-                  formData.append("id",ID_Proveedor)
-                  formData.append("nProveedor",nPro)
-                  formData.append("cProveedor",cPro)
-                  formData.append("oProveedor",Nombre_Proveedor)
+                  formData.append("tipo","modificarTonalidad")
+                  formData.append("id",ID_Tonalidad)
+                  formData.append("nTon",nTon)
+                  formData.append("cTon",cTon)
   
-                  fetch(`${apiURL}proveedores.php`,{
+                  fetch(`${apiURL}configuraciones.php`,{
                       method:'POST',
                       body:formData
                   })
@@ -164,7 +161,7 @@ export const Proveedores = () => {
                       const {estatus,mensaje} = await resp.json()
                       if(estatus){
                           Swal.fire('Correcto', mensaje, 'success')
-                          obtenerProveedores()
+                          obtenertonalidades()
                       }else{
                           Swal.fire('Error', mensaje, 'error')
                       }
@@ -174,81 +171,27 @@ export const Proveedores = () => {
           })
     }
 
-    const desHabilitarProveedor =(ID_Proveedor,Nombre_Proveedor) =>{
-        Swal.fire({
-            title: `¿Seguro Que Quieres Deshabilitar El Proveedor? ${Nombre_Proveedor}`,
-            showDenyButton: true,
-            showCancelButton: false,
-            confirmButtonText: 'Si, Deshabilitado',
-            denyButtonText: 'No, Cancelar',
-            allowOutsideClick: false
-          }).then((result) => {
-            if (result.isConfirmed) {
-              let timerInterval
-              Swal.fire({
-                title: 'Cargando',
-                html: `<div className="spinner-border" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>`,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: () => {
-                  Swal.showLoading()
-                  
-                  timerInterval = setInterval(() => {
-                   
-                  }, 100)
-                },
-                willClose: () => {
-                  clearInterval(timerInterval)
-                }
-              }).then((result) => {})
-                //Deshabilitar Proveedor
-                let formData = new FormData();
-                formData.append("tipo","deshabilitarProveedor");
-                formData.append("id",ID_Proveedor);
-                formData.append("nProveedor",Nombre_Proveedor);
-
-                fetch(`${apiURL}proveedores.php`,{
-                    method: 'post',
-                    body: formData
-                })
-                .then(async(resp) =>{
-                    const {estatus,mensaje} = await resp.json();
-                    if(estatus){
-                        Swal.fire('Correcto', mensaje, 'success')
-                        obtenerProveedores()
-                    }else{
-                        Swal.fire('Error', `Hubo un error al Deshabilitar El Proveedor ${Nombre_Proveedor}`, 'error')
-                    }
-                })
-            } else if (result.isDenied) {
-              Swal.fire('Accion Cancelada', 'No Deshabilito El Proveedor', 'error')
-            }
-          })
-    }
-
-    const agregarProvedoor = ()=>{
+    const agregarTonalidad = ()=>{
       Swal.fire({
         allowOutsideClick: false,
-        title: `Agregar Proveedor`,
-        html: `<label>Nombre Del Proveedor</label>
+        title: `Agregar Tonalidad`,
+        html: `<label>Nombre Del Tonalidad</label>
         <br />
-        <input type="text" id="nPro" class="swal2-input" placeholder="Nombre Del Proveedor">
+        <input type="text" id="nTon" class="swal2-input" placeholder="Nombre Del Tonalidad">
         <br />
-        <label>Clave Del Proveedor</label>
+        <label>Clave Del Tonalidad</label>
         <br />
-        <input type="text" id="cPro" class="swal2-input" placeholder="Clave Del Proveedor">`,
+        <input type="text" id="cTon" class="swal2-input" placeholder="Clave Del Tonalidad">`,
         confirmButtonText: 'Agregar',
         showCancelButton: true,
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if(result.isDismissed){
-          Swal.fire('Accion Cancelada', 'No Se Agrego El Proveedor', 'error')
+          Swal.fire('Accion Cancelada', 'No Se Agrego El Tonalidad', 'error')
         }else{
-            const nPro = Swal.getPopup().querySelector('#nPro').value
-            const cPro = Swal.getPopup().querySelector('#cPro').value
-            if (!nPro || !cPro) {
+            const nTon = Swal.getPopup().querySelector('#nTon').value
+            const cTon = Swal.getPopup().querySelector('#cTon').value
+            if (!nTon || !cTon) {
               Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
             }else{
               //Hacer Petición API
@@ -272,11 +215,11 @@ export const Proveedores = () => {
                 }
               }).then((result) => {})
               let formData = new FormData();
-              formData.append("tipo","agregarProveedor")
-              formData.append("nProveedor",nPro)
-              formData.append("cProveedor",cPro)
+              formData.append("tipo","agregarTonalidad")
+              formData.append("nTon",nTon)
+              formData.append("cTon",cTon)
 
-              fetch(`${apiURL}proveedores.php`,{
+              fetch(`${apiURL}configuraciones.php`,{
                   method:'POST',
                   body:formData
               })
@@ -284,7 +227,7 @@ export const Proveedores = () => {
                   const {estatus,mensaje} = await resp.json()
                   if(estatus){
                       Swal.fire('Correcto', mensaje, 'success')
-                      obtenerProveedores()
+                      obtenertonalidades()
                   }else{
                       Swal.fire('Error', mensaje, 'error')
                   }
@@ -293,52 +236,41 @@ export const Proveedores = () => {
         }
       })
     }
-
-    const iraPag = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedor/${ID}/${Nombre_Proveedor}`);
-    }
-    const iraPag2 = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedorDeshabilitados/${ID}/${Nombre_Proveedor}`);
-    }
-
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
     <Box sx={{ display: 'flex' }}>
   <CssBaseline />
-  <BarraSuperior pag='Proveedores' />
+  <BarraSuperior pag='Tonalidades' />
   <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
     <Toolbar />
-    <h3 style={{textAlign: 'center'}}>Lista De Proveedores</h3>
-    {(!cargandoproveedores) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : <Button onClick={agregarProvedoor} title='Agregar Proveedor' key='AgregarPro' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Proveedor</Button>}
+    <h3 style={{textAlign: 'center'}}>Lista De tonalidades</h3>
+    {(!cargandotonalidades) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : <Button onClick={agregarTonalidad} title='Agregar Proveedor' key='AgregarPro' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Tonalidad</Button>}
     <SearchComponent placeholder='Buscar' onChangeHandle={(texto) =>requestSearch(texto)}/>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">Nombre Del Proveedor</TableCell>
-            <TableCell align="center">Clave Del Proveedor</TableCell>
+            <TableCell align="center">Nombre Del Tonalidad</TableCell>
+            <TableCell align="center">Clave Del Tonalidad</TableCell>
             <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {(!cargandoproveedores) ?
+          {(!cargandotonalidades) ?
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={3}> <Skeleton /></TableCell>
             </TableRow>
-          :(proveedores!=undefined) ? proveedores.slice(pg * rpg, pg * rpg + rpg).map(({ID_Proveedor,Nombre_Proveedor,Clave_Proveedor}) =>(
+          :(tonalidades!=undefined) ? tonalidades.slice(pg * rpg, pg * rpg + rpg).map(({ID_Tonalidad,Nombre_Tonalidad,Clave_Tonalidad}) =>(
             <TableRow
-              key={ID_Proveedor}
+              key={ID_Tonalidad}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               
-              <TableCell align="center">{Nombre_Proveedor}</TableCell>
-              <TableCell align="center">{Clave_Proveedor}</TableCell>
+              <TableCell align="center">{Nombre_Tonalidad}</TableCell>
+              <TableCell align="center">{Clave_Tonalidad}</TableCell>
               <TableCell align="center">
-              <Button onClick={() => editarProveedor(ID_Proveedor,Nombre_Proveedor,Clave_Proveedor)} title='Editar' key={`a${ID_Proveedor}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
-              <Button onClick={() => desHabilitarProveedor(ID_Proveedor,Nombre_Proveedor)} title='Baja' key={`b${ID_Proveedor}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button>
-              <Button onClick={() => iraPag(ID_Proveedor,Nombre_Proveedor)} title='Ver Productos' key={`c${ID_Proveedor}`} variant="contained" color='primary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye"></i></Button>
-              <Button onClick={() => iraPag2(ID_Proveedor,Nombre_Proveedor)} title='Ver Productos Deshabilitados' key={`c${ID_Proveedor}`} variant="contained" color='secondary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye-slash"></i></Button>
+                <Button onClick={() => editarTonalidad(ID_Tonalidad,Nombre_Tonalidad,Clave_Tonalidad)} title='Editar' key={`a${ID_Tonalidad}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
               </TableCell>
             </TableRow>
           )) : 
@@ -351,11 +283,11 @@ export const Proveedores = () => {
             </TableRow>
           }
         </TableBody>
-        {(proveedores!=undefined) ? 
+        {(tonalidades!=undefined) ? 
         <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 labelRowsPerPage='Resultados Por Página'
-                count={proveedores.length}
+                count={tonalidades.length}
                 rowsPerPage={rpg}
                 page={pg}
                 onPageChange={handleChangePage}

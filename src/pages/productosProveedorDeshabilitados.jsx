@@ -64,7 +64,14 @@ export const ProductosProveedorDeshabilitados = () => {
     useEffect(() => {
         validarModoOscuro()
         obtenerArticulosProveedores()
+        validarNotLoggedPage()
     }, [])
+
+    const  validarNotLoggedPage = () => {
+      if (localStorage.logged == undefined) {
+          navigate('/login')
+      }
+  }
 
     const obtenerArticulosProveedores = () =>{
         fetch(`${apiURL}proveedores.php?tipo=obtenerArtProveedorDeshabilitados&provedorID=${id}`)

@@ -97,7 +97,7 @@ const cambiartamanof = () =>{
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-        <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Pincipal' : ''}</h4>
+        <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Principal' : ''}</h4>
           <List>
             {['Administrador', 'Sucursal', 'Reportes'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>

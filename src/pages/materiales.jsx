@@ -63,7 +63,14 @@ export const Materiales = () => {
     useEffect(() => {
         validarModoOscuro()
         obtenerMateriales()
+        validarNotLoggedPage()
     }, [])
+
+    const  validarNotLoggedPage = () => {
+      if (localStorage.logged == undefined) {
+          navigate('/login')
+      }
+  }
 
       const obtenerMateriales = () =>{
         fetch(`${apiURL}configuraciones.php?tipo=obtenerTodosMateriales`)

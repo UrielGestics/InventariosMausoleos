@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 //Navegación
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 //Modo Oscuro
 import CssBaseline from '@mui/material/CssBaseline';
@@ -36,16 +36,16 @@ import { apiURL } from '../functiones'
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
 
-
-export const Proveedores = () => {
-  const navigate = useNavigate();
+export const ProductosProveedor = () => {
+    let { id, nombre } = useParams();
+    const navigate = useNavigate();
 
     const [obscuro, setobscuro] = useState()
-    const [proveedores, setproveedores] = useState([])
-    const [proveedoresCopia, setproveedoresCopia] = useState([])
-    const [cargandoproveedores, setCargandoproveedores] = useState(false)
+    const [articulosproveedores, setArticulosProveedores] = useState([])
+    const [articulosproveedoresCopia, setArticulosProveedoresCopia] = useState([])
+    const [cargandoarticulosproveedores, setCargandoArticulosProveedores] = useState(false)
     const [pg, setpg] = React.useState(0);
-    const [rpg, setrpg] = React.useState(5);
+    const [rpg, setrpg] = React.useState(10);
 
     const darkTheme = createTheme({
         palette: {
@@ -65,19 +65,19 @@ export const Proveedores = () => {
 
     useEffect(() => {
         validarModoOscuro()
-        obtenerProveedores()
+        obtenerArticulosProveedores()
     }, [])
 
-      const obtenerProveedores = () =>{
-        fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedoresActivos`)
+    const obtenerArticulosProveedores = () =>{
+        fetch(`${apiURL}proveedores.php?tipo=obtenerArtProveedor&provedorID=${id}`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
-            setproveedores(finalResp[0])
-            setCargandoproveedores(true)
-            setproveedoresCopia(finalResp[0])
+            setArticulosProveedores(finalResp[0])
+            setArticulosProveedoresCopia(finalResp[0])
+            setCargandoArticulosProveedores(true)
         })
-    } 
-  
+    }
+    
     function handleChangePage(event, newpage) {
         setpg(newpage);
     }
@@ -89,40 +89,43 @@ export const Proveedores = () => {
 
     const requestSearch = (texto) => {
         if(texto == ''){
-            obtenerProveedores()
+            obtenerArticulosProveedores()
         }else{
-            const filteredRows = proveedoresCopia.filter((row) => {
-                return row.Nombre_Proveedor.toLowerCase().includes(texto.toLowerCase())
+            const filteredRows = articulosproveedoresCopia.filter((row) => {
+                return row.Nombre_Articulo.toLowerCase().includes(texto.toLowerCase())
               });
-               setproveedores(filteredRows)
+               setArticulosProveedores(filteredRows)
         }
       }
 
-    const  editarProveedor = (ID_Proveedor,Nombre_Proveedor,Clave_Proveedor) =>{
+      const regresar = () =>{
+        navigate(`/Proveedores`);
+      }
+
+      const agregarArticuloProveedor = () =>{
         Swal.fire({
             allowOutsideClick: false,
-            title: `Modificar Proveedor ${Nombre_Proveedor}`,
-            html: `<label>Nombre Del Proveedor</label>
+            title: `Agregar Arituclo A ${nombre}`,
+            html: `<label>Nombre Del Articulo</label>
             <br />
-            <input type="text" id="nPro" class="swal2-input" value='${Nombre_Proveedor}' placeholder="Nombre Del Proveedor">
-            <br />>
-            <label>Clave Del Proveedor</label>
+            <input type="text" id="nArtPro" class="swal2-input" placeholder="Nombre Del Articulo">
             <br />
-            <input type="text" id="cPro" class="swal2-input" value='${Clave_Proveedor}' placeholder="Clave Del Proveedor">`,
-            confirmButtonText: 'Editar',
+            <label>Clave Del Articulo</label>
+            <br />
+            <input type="text" id="cArtPro" class="swal2-input" placeholder="Clave Del Articulo">`,
+            confirmButtonText: 'Agregar',
             showCancelButton: true,
             cancelButtonText: 'Cancelar'
           }).then((result) => {
             if(result.isDismissed){
-              Swal.fire('Accion Cancelada', 'No Se Edito El Proveedor', 'error')
+              Swal.fire('Accion Cancelada', 'No Se Agrego El Articulo', 'error')
             }else{
-              
-                const nPro = Swal.getPopup().querySelector('#nPro').value
-                const cPro = Swal.getPopup().querySelector('#cPro').value
-                if (!nPro || !cPro) {
+                const nArtPro = Swal.getPopup().querySelector('#nArtPro').value
+                const cArtPro = Swal.getPopup().querySelector('#cArtPro').value
+                if (!nArtPro || !cArtPro) {
                   Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
                 }else{
-                  let timerInterval
+                    let timerInterval
               Swal.fire({
                 title: 'Cargando',
                 html: `<div className="spinner-border" role="status">
@@ -143,12 +146,11 @@ export const Proveedores = () => {
               }).then((result) => {})
                   //Hacer Petición API
                   let formData = new FormData();
-                  formData.append("tipo","modificarProveedor")
-                  formData.append("id",ID_Proveedor)
-                  formData.append("nProveedor",nPro)
-                  formData.append("cProveedor",cPro)
-                  formData.append("oProveedor",Nombre_Proveedor)
-  
+                  formData.append("tipo","agregarArtProveedor")
+                  formData.append("nArtPro",nArtPro)
+                  formData.append("cArtPro",cArtPro)
+                  formData.append("id",id)
+    
                   fetch(`${apiURL}proveedores.php`,{
                       method:'POST',
                       body:formData
@@ -157,7 +159,7 @@ export const Proveedores = () => {
                       const {estatus,mensaje} = await resp.json()
                       if(estatus){
                           Swal.fire('Correcto', mensaje, 'success')
-                          obtenerProveedores()
+                          obtenerArticulosProveedores()
                       }else{
                           Swal.fire('Error', mensaje, 'error')
                       }
@@ -165,11 +167,11 @@ export const Proveedores = () => {
                 }
             }
           })
-    }
+      }
 
-    const desHabilitarProveedor =(ID_Proveedor,Nombre_Proveedor) =>{
+      const desHabilitarArtProveedor =(ID_ArticuloXProveedor,Nombre_Articulo) =>{
         Swal.fire({
-            title: `¿Seguro Que Quieres Deshabilitar El Proveedor? ${Nombre_Proveedor}`,
+            title: `¿Seguro Que Quieres Deshabilitar El Articulo? ${Nombre_Articulo}`,
             showDenyButton: true,
             showCancelButton: false,
             confirmButtonText: 'Si, Deshabilitado',
@@ -198,9 +200,9 @@ export const Proveedores = () => {
               }).then((result) => {})
                 //Deshabilitar Proveedor
                 let formData = new FormData();
-                formData.append("tipo","deshabilitarProveedor");
-                formData.append("id",ID_Proveedor);
-                formData.append("nProveedor",Nombre_Proveedor);
+                formData.append("tipo","deshabilitarArtProveedor");
+                formData.append("ID_ArticuloXProveedor",ID_ArticuloXProveedor);
+                formData.append("nArtProveedor",Nombre_Articulo);
 
                 fetch(`${apiURL}proveedores.php`,{
                     method: 'post',
@@ -210,9 +212,9 @@ export const Proveedores = () => {
                     const {estatus,mensaje} = await resp.json();
                     if(estatus){
                         Swal.fire('Correcto', mensaje, 'success')
-                        obtenerProveedores()
+                        obtenerArticulosProveedores()
                     }else{
-                        Swal.fire('Error', `Hubo un error al Deshabilitar El Proveedor ${Nombre_Proveedor}`, 'error')
+                        Swal.fire('Error', `Hubo un error al Deshabilitar El Proveedor ${Nombre_Articulo}`, 'error')
                     }
                 })
             } else if (result.isDenied) {
@@ -221,31 +223,31 @@ export const Proveedores = () => {
           })
     }
 
-    const agregarProvedoor = ()=>{
-      Swal.fire({
-        allowOutsideClick: false,
-        title: `Agregar Proveedor`,
-        html: `<label>Nombre Del Proveedor</label>
-        <br />
-        <input type="text" id="nPro" class="swal2-input" placeholder="Nombre Del Proveedor">
-        <br />
-        <label>Clave Del Proveedor</label>
-        <br />
-        <input type="text" id="cPro" class="swal2-input" placeholder="Clave Del Proveedor">`,
-        confirmButtonText: 'Agregar',
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if(result.isDismissed){
-          Swal.fire('Accion Cancelada', 'No Se Agrego El Proveedor', 'error')
-        }else{
-            const nPro = Swal.getPopup().querySelector('#nPro').value
-            const cPro = Swal.getPopup().querySelector('#cPro').value
-            if (!nPro || !cPro) {
-              Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
+    const editarArtProveedor = (ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo) =>{
+        Swal.fire({
+            allowOutsideClick: false,
+            title: `Modificar Articulo ${Nombre_Articulo}`,
+            html: `<label>Nombre Del Articulo</label>
+            <br />
+            <input type="text" id="nArtPro" class="swal2-input" value='${Nombre_Articulo}' placeholder="Nombre Del Articulo">
+            <br />
+            <label>Clave Del Articulo</label>
+            <br />
+            <input type="text" id="cArtPro" class="swal2-input" value='${Clave_Articulo}' placeholder="Clave Del Proveedor">`,
+            confirmButtonText: 'Editar',
+            showCancelButton: true,
+            cancelButtonText: 'Cancelar'
+          }).then((result) => {
+            if(result.isDismissed){
+              Swal.fire('Accion Cancelada', 'No Se Edito El Proveedor', 'error')
             }else{
-              //Hacer Petición API
-              let timerInterval
+              
+                const nArtPro = Swal.getPopup().querySelector('#nArtPro').value
+                const cArtPro = Swal.getPopup().querySelector('#cArtPro').value
+                if (!nArtPro || !cArtPro) {
+                  Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
+                }else{
+                  let timerInterval
               Swal.fire({
                 title: 'Cargando',
                 html: `<div className="spinner-border" role="status">
@@ -264,74 +266,72 @@ export const Proveedores = () => {
                   clearInterval(timerInterval)
                 }
               }).then((result) => {})
-              let formData = new FormData();
-              formData.append("tipo","agregarProveedor")
-              formData.append("nProveedor",nPro)
-              formData.append("cProveedor",cPro)
-
-              fetch(`${apiURL}proveedores.php`,{
-                  method:'POST',
-                  body:formData
-              })
-              .then(async(resp) =>{
-                  const {estatus,mensaje} = await resp.json()
-                  if(estatus){
-                      Swal.fire('Correcto', mensaje, 'success')
-                      obtenerProveedores()
-                  }else{
-                      Swal.fire('Error', mensaje, 'error')
-                  }
-              })
+                  //Hacer Petición API
+                  let formData = new FormData();
+                  formData.append("tipo","modificarArtProveedor")
+                  formData.append("id",ID_ArticuloXProveedor)
+                  formData.append("nArtPro",nArtPro)
+                  formData.append("cArtPro",cArtPro)
+  
+                  fetch(`${apiURL}proveedores.php`,{
+                      method:'POST',
+                      body:formData
+                  })
+                  .then(async(resp) =>{
+                      const {estatus,mensaje} = await resp.json()
+                      if(estatus){
+                          Swal.fire('Correcto', mensaje, 'success')
+                          obtenerArticulosProveedores()
+                      }else{
+                          Swal.fire('Error', mensaje, 'error')
+                      }
+                  })
+                }
             }
+          })
+    }
+    return (
+        <ThemeProvider theme={darkTheme} >
+        <CssBaseline />
+        <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <BarraSuperior pag='Proveedores' />
+      <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
+        <Toolbar />
+        <h3 style={{textAlign: 'center'}}>Lista De Articulos De {nombre}</h3>
+        {(!cargandoarticulosproveedores) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : 
+        <>
+        <Button onClick={agregarArticuloProveedor} title='Agregar' key='AgregarArt' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Articulo</Button>
+        <Button onClick={regresar} title='Regresar' key='RregresarArt' variant="contained" color='error' style={{float: 'right', marginRight: '10px', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-arrow-left-circle" style={{marginRight : '10px'}}></i> Regresar</Button>
+        </>
         }
-      })
-    }
-
-    const iraPag = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedor/${ID}/${Nombre_Proveedor}`);
-    }
-    const iraPag2 = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedorDeshabilitados/${ID}/${Nombre_Proveedor}`);
-    }
-
-  return (
-    <ThemeProvider theme={darkTheme} >
-    <CssBaseline />
-    <Box sx={{ display: 'flex' }}>
-  <CssBaseline />
-  <BarraSuperior pag='Proveedores' />
-  <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
-    <Toolbar />
-    <h3 style={{textAlign: 'center'}}>Lista De Proveedores</h3>
-    {(!cargandoproveedores) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : <Button onClick={agregarProvedoor} title='Agregar Proveedor' key='AgregarPro' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Proveedor</Button>}
     <SearchComponent placeholder='Buscar' onChangeHandle={(texto) =>requestSearch(texto)}/>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">Nombre Del Proveedor</TableCell>
-            <TableCell align="center">Clave Del Proveedor</TableCell>
+            <TableCell align="center">Nombre Del Articulo</TableCell>
+            <TableCell align="center">Clave Del Articulo</TableCell>
             <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {(!cargandoproveedores) ?
+          {(!cargandoarticulosproveedores) ?
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={3}> <Skeleton /></TableCell>
             </TableRow>
-          :(proveedores!=undefined) ? proveedores.slice(pg * rpg, pg * rpg + rpg).map(({ID_Proveedor,Nombre_Proveedor,Clave_Proveedor}) =>(
+          :(articulosproveedores!=undefined) ? articulosproveedores.slice(pg * rpg, pg * rpg + rpg).map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo}) =>(
             <TableRow
-              key={ID_Proveedor}
+              key={ID_ArticuloXProveedor}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               
-              <TableCell align="center">{Nombre_Proveedor}</TableCell>
-              <TableCell align="center">{Clave_Proveedor}</TableCell>
+              <TableCell align="center">{Nombre_Articulo}</TableCell>
+              <TableCell align="center">{Clave_Articulo}</TableCell>
               <TableCell align="center">
-              <Button onClick={() => editarProveedor(ID_Proveedor,Nombre_Proveedor,Clave_Proveedor)} title='Editar' key={`a${ID_Proveedor}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
-              <Button onClick={() => desHabilitarProveedor(ID_Proveedor,Nombre_Proveedor)} title='Baja' key={`b${ID_Proveedor}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button>
-              <Button onClick={() => iraPag(ID_Proveedor,Nombre_Proveedor)} title='Ver Productos' key={`c${ID_Proveedor}`} variant="contained" color='primary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye"></i></Button>
-              <Button onClick={() => iraPag2(ID_Proveedor,Nombre_Proveedor)} title='Ver Productos Deshabilitados' key={`c${ID_Proveedor}`} variant="contained" color='secondary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye-slash"></i></Button>
+              <Button  onClick={() => editarArtProveedor(ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo)} title='Editar' key={`a${ID_ArticuloXProveedor}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
+              <Button onClick={() => desHabilitarArtProveedor(ID_ArticuloXProveedor,Nombre_Articulo)}  title='Baja' key={`b${ID_ArticuloXProveedor}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button>
+             
               </TableCell>
             </TableRow>
           )) : 
@@ -344,11 +344,11 @@ export const Proveedores = () => {
             </TableRow>
           }
         </TableBody>
-        {(proveedores!=undefined) ? 
+        {(articulosproveedores!=undefined) ? 
         <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 labelRowsPerPage='Resultados Por Página'
-                count={proveedores.length}
+                count={articulosproveedores.length}
                 rowsPerPage={rpg}
                 page={pg}
                 onPageChange={handleChangePage}
@@ -365,9 +365,9 @@ export const Proveedores = () => {
         />}
        </Table>
     </TableContainer>
-
-  </Box>
-</Box>
-    </ThemeProvider>
-  )
-}
+      </Box>
+    </Box>
+        </ThemeProvider>
+      )
+    }
+    

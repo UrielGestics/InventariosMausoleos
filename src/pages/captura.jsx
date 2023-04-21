@@ -174,8 +174,7 @@ export const Captura = () => {
               willClose: () => {
                 clearInterval(timerInterval)
               }
-            }).then((result) => {
-            })
+            }).then((result) => {})
             const proveedor = proveedores.filter(pro => pro.ID_Proveedor == proveedoresNombre)
                      const artProveedor = artProveedores.filter(pro => pro.ID_ArticuloXProveedor == artProveedoresNombre)
                      const materiales = material.filter(mat => mat.ID_Material == materialNombre)

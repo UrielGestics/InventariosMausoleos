@@ -35,15 +35,12 @@ import { apiURL } from '../functiones'
 
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
-
-
-export const Proveedores = () => {
-  const navigate = useNavigate();
+export const Materiales = () => {
 
     const [obscuro, setobscuro] = useState()
-    const [proveedores, setproveedores] = useState([])
-    const [proveedoresCopia, setproveedoresCopia] = useState([])
-    const [cargandoproveedores, setCargandoproveedores] = useState(false)
+    const [materiales, setmateriales] = useState([])
+    const [materialesCopia, setmaterialesCopia] = useState([])
+    const [cargandomateriales, setCargandomateriales] = useState(false)
     const [pg, setpg] = React.useState(0);
     const [rpg, setrpg] = React.useState(5);
 
@@ -65,16 +62,16 @@ export const Proveedores = () => {
 
     useEffect(() => {
         validarModoOscuro()
-        obtenerProveedores()
+        obtenerMateriales()
     }, [])
 
-      const obtenerProveedores = () =>{
-        fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedoresActivos`)
+      const obtenerMateriales = () =>{
+        fetch(`${apiURL}configuraciones.php?tipo=obtenerTodosMateriales`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
-            setproveedores(finalResp[0])
-            setCargandoproveedores(true)
-            setproveedoresCopia(finalResp[0])
+            setmateriales(finalResp[0])
+            setCargandomateriales(true)
+            setmaterialesCopia(finalResp[0])
         })
     } 
   
@@ -89,37 +86,37 @@ export const Proveedores = () => {
 
     const requestSearch = (texto) => {
         if(texto == ''){
-            obtenerProveedores()
+            obtenerMateriales()
         }else{
-            const filteredRows = proveedoresCopia.filter((row) => {
-                return row.Nombre_Proveedor.toLowerCase().includes(texto.toLowerCase())
+            const filteredRows = materialesCopia.filter((row) => {
+                return row.Nombre_Material.toLowerCase().includes(texto.toLowerCase())
               });
-               setproveedores(filteredRows)
+              setmateriales(filteredRows)
         }
       }
 
-    const  editarProveedor = (ID_Proveedor,Nombre_Proveedor,Clave_Proveedor) =>{
+    const  editarMaterial = (ID_Material,Nombre_Material,Clave_Material) =>{
         Swal.fire({
             allowOutsideClick: false,
-            title: `Modificar Proveedor ${Nombre_Proveedor}`,
-            html: `<label>Nombre Del Proveedor</label>
+            title: `Modificar Material ${Nombre_Material}`,
+            html: `<label>Nombre Del Material</label>
             <br />
-            <input type="text" id="nPro" class="swal2-input" value='${Nombre_Proveedor}' placeholder="Nombre Del Proveedor">
-            <br />>
-            <label>Clave Del Proveedor</label>
+            <input type="text" id="nMat" class="swal2-input" value='${Nombre_Material}' placeholder="Nombre Del Material">
             <br />
-            <input type="text" id="cPro" class="swal2-input" value='${Clave_Proveedor}' placeholder="Clave Del Proveedor">`,
+            <label>Clave Del Material</label>
+            <br />
+            <input type="text" id="cMat" class="swal2-input" value='${Clave_Material}' placeholder="Clave Del Material">`,
             confirmButtonText: 'Editar',
             showCancelButton: true,
             cancelButtonText: 'Cancelar'
           }).then((result) => {
             if(result.isDismissed){
-              Swal.fire('Accion Cancelada', 'No Se Edito El Proveedor', 'error')
+              Swal.fire('Accion Cancelada', 'No Se Edito El Material', 'error')
             }else{
               
-                const nPro = Swal.getPopup().querySelector('#nPro').value
-                const cPro = Swal.getPopup().querySelector('#cPro').value
-                if (!nPro || !cPro) {
+                const nMat = Swal.getPopup().querySelector('#nMat').value
+                const cMat = Swal.getPopup().querySelector('#cMat').value
+                if (!nMat || !cMat) {
                   Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
                 }else{
                   let timerInterval
@@ -143,13 +140,12 @@ export const Proveedores = () => {
               }).then((result) => {})
                   //Hacer Petición API
                   let formData = new FormData();
-                  formData.append("tipo","modificarProveedor")
-                  formData.append("id",ID_Proveedor)
-                  formData.append("nProveedor",nPro)
-                  formData.append("cProveedor",cPro)
-                  formData.append("oProveedor",Nombre_Proveedor)
+                  formData.append("tipo","modificarMaterial")
+                  formData.append("id",ID_Material)
+                  formData.append("nMat",nMat)
+                  formData.append("cMat",cMat)
   
-                  fetch(`${apiURL}proveedores.php`,{
+                  fetch(`${apiURL}configuraciones.php`,{
                       method:'POST',
                       body:formData
                   })
@@ -157,7 +153,7 @@ export const Proveedores = () => {
                       const {estatus,mensaje} = await resp.json()
                       if(estatus){
                           Swal.fire('Correcto', mensaje, 'success')
-                          obtenerProveedores()
+                          obtenerMateriales()
                       }else{
                           Swal.fire('Error', mensaje, 'error')
                       }
@@ -167,81 +163,27 @@ export const Proveedores = () => {
           })
     }
 
-    const desHabilitarProveedor =(ID_Proveedor,Nombre_Proveedor) =>{
-        Swal.fire({
-            title: `¿Seguro Que Quieres Deshabilitar El Proveedor? ${Nombre_Proveedor}`,
-            showDenyButton: true,
-            showCancelButton: false,
-            confirmButtonText: 'Si, Deshabilitado',
-            denyButtonText: 'No, Cancelar',
-            allowOutsideClick: false
-          }).then((result) => {
-            if (result.isConfirmed) {
-              let timerInterval
-              Swal.fire({
-                title: 'Cargando',
-                html: `<div className="spinner-border" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>`,
-                timer: 2000,
-                timerProgressBar: true,
-                didOpen: () => {
-                  Swal.showLoading()
-                  
-                  timerInterval = setInterval(() => {
-                   
-                  }, 100)
-                },
-                willClose: () => {
-                  clearInterval(timerInterval)
-                }
-              }).then((result) => {})
-                //Deshabilitar Proveedor
-                let formData = new FormData();
-                formData.append("tipo","deshabilitarProveedor");
-                formData.append("id",ID_Proveedor);
-                formData.append("nProveedor",Nombre_Proveedor);
-
-                fetch(`${apiURL}proveedores.php`,{
-                    method: 'post',
-                    body: formData
-                })
-                .then(async(resp) =>{
-                    const {estatus,mensaje} = await resp.json();
-                    if(estatus){
-                        Swal.fire('Correcto', mensaje, 'success')
-                        obtenerProveedores()
-                    }else{
-                        Swal.fire('Error', `Hubo un error al Deshabilitar El Proveedor ${Nombre_Proveedor}`, 'error')
-                    }
-                })
-            } else if (result.isDenied) {
-              Swal.fire('Accion Cancelada', 'No Deshabilito El Proveedor', 'error')
-            }
-          })
-    }
-
-    const agregarProvedoor = ()=>{
+    const agregarMaterial = ()=>{
       Swal.fire({
         allowOutsideClick: false,
-        title: `Agregar Proveedor`,
-        html: `<label>Nombre Del Proveedor</label>
+        title: `Agregar Material`,
+        html: `<label>Nombre Del Material</label>
         <br />
-        <input type="text" id="nPro" class="swal2-input" placeholder="Nombre Del Proveedor">
+        <input type="text" id="nMat" class="swal2-input" placeholder="Nombre Del Material">
         <br />
-        <label>Clave Del Proveedor</label>
+        <label>Clave Del Material</label>
         <br />
-        <input type="text" id="cPro" class="swal2-input" placeholder="Clave Del Proveedor">`,
+        <input type="text" id="cMat" class="swal2-input" placeholder="Clave Del Material">`,
         confirmButtonText: 'Agregar',
         showCancelButton: true,
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if(result.isDismissed){
-          Swal.fire('Accion Cancelada', 'No Se Agrego El Proveedor', 'error')
+          Swal.fire('Accion Cancelada', 'No Se Agrego El Material', 'error')
         }else{
-            const nPro = Swal.getPopup().querySelector('#nPro').value
-            const cPro = Swal.getPopup().querySelector('#cPro').value
-            if (!nPro || !cPro) {
+            const nMat = Swal.getPopup().querySelector('#nMat').value
+            const cMat = Swal.getPopup().querySelector('#cMat').value
+            if (!nMat || !cMat) {
               Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
             }else{
               //Hacer Petición API
@@ -265,11 +207,11 @@ export const Proveedores = () => {
                 }
               }).then((result) => {})
               let formData = new FormData();
-              formData.append("tipo","agregarProveedor")
-              formData.append("nProveedor",nPro)
-              formData.append("cProveedor",cPro)
+              formData.append("tipo","agregarMaterial")
+              formData.append("nMat",nMat)
+              formData.append("cMat",cMat)
 
-              fetch(`${apiURL}proveedores.php`,{
+              fetch(`${apiURL}configuraciones.php`,{
                   method:'POST',
                   body:formData
               })
@@ -277,7 +219,7 @@ export const Proveedores = () => {
                   const {estatus,mensaje} = await resp.json()
                   if(estatus){
                       Swal.fire('Correcto', mensaje, 'success')
-                      obtenerProveedores()
+                      obtenerMateriales()
                   }else{
                       Swal.fire('Error', mensaje, 'error')
                   }
@@ -286,52 +228,41 @@ export const Proveedores = () => {
         }
       })
     }
-
-    const iraPag = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedor/${ID}/${Nombre_Proveedor}`);
-    }
-    const iraPag2 = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedorDeshabilitados/${ID}/${Nombre_Proveedor}`);
-    }
-
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
     <Box sx={{ display: 'flex' }}>
   <CssBaseline />
-  <BarraSuperior pag='Proveedores' />
+  <BarraSuperior pag='Materiales' />
   <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
     <Toolbar />
-    <h3 style={{textAlign: 'center'}}>Lista De Proveedores</h3>
-    {(!cargandoproveedores) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : <Button onClick={agregarProvedoor} title='Agregar Proveedor' key='AgregarPro' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Proveedor</Button>}
+    <h3 style={{textAlign: 'center'}}>Lista De Materiales</h3>
+    {(!cargandomateriales) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : <Button onClick={agregarMaterial} title='Agregar Proveedor' key='AgregarPro' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Material</Button>}
     <SearchComponent placeholder='Buscar' onChangeHandle={(texto) =>requestSearch(texto)}/>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">Nombre Del Proveedor</TableCell>
-            <TableCell align="center">Clave Del Proveedor</TableCell>
+            <TableCell align="center">Nombre Del Material</TableCell>
+            <TableCell align="center">Clave Del Material</TableCell>
             <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {(!cargandoproveedores) ?
+          {(!cargandomateriales) ?
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={3}> <Skeleton /></TableCell>
             </TableRow>
-          :(proveedores!=undefined) ? proveedores.slice(pg * rpg, pg * rpg + rpg).map(({ID_Proveedor,Nombre_Proveedor,Clave_Proveedor}) =>(
+          :(materiales!=undefined) ? materiales.slice(pg * rpg, pg * rpg + rpg).map(({ID_Material,Nombre_Material,Clave_Material}) =>(
             <TableRow
-              key={ID_Proveedor}
+              key={ID_Material}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               
-              <TableCell align="center">{Nombre_Proveedor}</TableCell>
-              <TableCell align="center">{Clave_Proveedor}</TableCell>
+              <TableCell align="center">{Nombre_Material}</TableCell>
+              <TableCell align="center">{Clave_Material}</TableCell>
               <TableCell align="center">
-              <Button onClick={() => editarProveedor(ID_Proveedor,Nombre_Proveedor,Clave_Proveedor)} title='Editar' key={`a${ID_Proveedor}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
-              <Button onClick={() => desHabilitarProveedor(ID_Proveedor,Nombre_Proveedor)} title='Baja' key={`b${ID_Proveedor}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button>
-              <Button onClick={() => iraPag(ID_Proveedor,Nombre_Proveedor)} title='Ver Productos' key={`c${ID_Proveedor}`} variant="contained" color='primary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye"></i></Button>
-              <Button onClick={() => iraPag2(ID_Proveedor,Nombre_Proveedor)} title='Ver Productos Deshabilitados' key={`c${ID_Proveedor}`} variant="contained" color='secondary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye-slash"></i></Button>
+                <Button onClick={() => editarMaterial(ID_Material,Nombre_Material,Clave_Material)} title='Editar' key={`a${ID_Material}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
               </TableCell>
             </TableRow>
           )) : 
@@ -344,11 +275,11 @@ export const Proveedores = () => {
             </TableRow>
           }
         </TableBody>
-        {(proveedores!=undefined) ? 
+        {(materiales!=undefined) ? 
         <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 labelRowsPerPage='Resultados Por Página'
-                count={proveedores.length}
+                count={materiales.length}
                 rowsPerPage={rpg}
                 page={pg}
                 onPageChange={handleChangePage}

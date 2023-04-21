@@ -54,6 +54,8 @@ const irAPag = (text) =>{
 
   }else if(text == 'Administrador'){
     navigate('/inicio')
+  }else if(text == 'Proveedores Deshabilitados'){
+    navigate('/proveedoresDeshabilitados')
   }else{
     navigate(`/${text}`)
   }
@@ -95,6 +97,7 @@ const cambiartamanof = () =>{
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
+        <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Pincipal' : ''}</h4>
           <List>
             {['Administrador', 'Sucursal', 'Reportes'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
@@ -122,7 +125,7 @@ const cambiartamanof = () =>{
             ))}
           </List>
           <Divider />
-          <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Configuraciones' : ''}</h4>
+          <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Catalogos' : ''}</h4>
           <List>
           {['Proveedores', 'Proveedores Deshabilitados', 'Materiales', 'Colores', 'Tonalidades'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
@@ -136,6 +139,7 @@ const cambiartamanof = () =>{
             ))}
           </List>
           <Divider />
+          <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Configuraciones' : ''}</h4>
           <List>
             {['Modo Oscuro', 'Perfil', 'Salir'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={(index == 0) ? cambiarModo : () =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>

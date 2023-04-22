@@ -255,7 +255,7 @@ export const Captura = () => {
         <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
             {proveedores.map(({Nombre_Proveedor,ID_Proveedor,Clave_Proveedor}, idx) =>{
                 return(
-                <MenuItem data-clave={Clave_Proveedor} key={ID_Proveedor} value={ID_Proveedor}>{Nombre_Proveedor} - {Clave_Proveedor}</MenuItem>
+                <MenuItem data-clave={Clave_Proveedor} key={ID_Proveedor} value={ID_Proveedor}>{Nombre_Proveedor}</MenuItem>
                 );
             })}
           
@@ -267,7 +267,7 @@ export const Captura = () => {
         <Select labelId="labelArticuloProveedor" id="selectArticuloProveedor" label="Arituclo Del Proveedor" onChange={cambioSelectProveedoresArituclos}>
             {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo }, idx) =>{
                 return(
-                <MenuItem key={ID_ArticuloXProveedor} value={ID_ArticuloXProveedor}>{Nombre_Articulo} - {Clave_Articulo}</MenuItem>
+                <MenuItem key={ID_ArticuloXProveedor} value={ID_ArticuloXProveedor}>{Nombre_Articulo}</MenuItem>
                 );
             })}
           
@@ -279,7 +279,7 @@ export const Captura = () => {
         <Select labelId="labelMateriales" id="selectMateriales" label="Materiales" onChange={cambioSelectMateriales}>
             {material.map(({ID_Material,Nombre_Material, Clave_Material}, idx) =>{
                 return(
-                <MenuItem key={ID_Material} value={ID_Material}>{Nombre_Material} - {Clave_Material}</MenuItem>
+                <MenuItem key={ID_Material} value={ID_Material}>{Nombre_Material}</MenuItem>
                 );
             })}
           
@@ -291,7 +291,7 @@ export const Captura = () => {
         <Select labelId="labelColores" id="selectColores" label="Colores" onChange={cambioSelectColores}>
             {colores.map(({ID_Color,Nombre_Color, Clave_Color}, idx) =>{
                 return(
-                <MenuItem key={ID_Color} value={ID_Color}>{Nombre_Color} - {Clave_Color}</MenuItem>
+                <MenuItem key={ID_Color} value={ID_Color}>{Nombre_Color}</MenuItem>
                 );
             })}
           
@@ -303,7 +303,7 @@ export const Captura = () => {
         <Select labelId="labelTonalidades" id="selectTonalidades" label="Tonalidades" onChange={cambioSelectTonalidade}>
             {tonalidades.map(({ID_Tonalidad,Nombre_Tonalidad, Clave_Tonalidad}, idx) =>{
                 return(
-                <MenuItem key={ID_Tonalidad} value={ID_Tonalidad}>{Nombre_Tonalidad} - {Clave_Tonalidad}</MenuItem>
+                <MenuItem key={ID_Tonalidad} value={ID_Tonalidad}>{Nombre_Tonalidad}</MenuItem>
                 );
             })}
           

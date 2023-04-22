@@ -235,6 +235,114 @@ export const Materiales = () => {
         }
       })
     }
+
+    const deshabilitarMaterial = (ID_Material,Nombre_Material) =>{
+      Swal.fire({
+        title: `¿Seguro Que Quieres Deshabilitar El Material? ${Nombre_Material}`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Si, Deshabilitado',
+        denyButtonText: 'No, Cancelar',
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let timerInterval
+          Swal.fire({
+            title: 'Cargando',
+            html: `<div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>`,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading()
+              
+              timerInterval = setInterval(() => {
+               
+              }, 100)
+            },
+            willClose: () => {
+              clearInterval(timerInterval)
+            }
+          }).then((result) => {})
+            //Deshabilitar Proveedor
+            let formData = new FormData();
+            formData.append("tipo","habilitarDeshabilitarMaterial");
+            formData.append("id",ID_Material);
+            formData.append("accion",'Baja');
+
+            fetch(`${apiURL}configuraciones.php`,{
+                method: 'post',
+                body: formData
+            })
+            .then(async(resp) =>{
+                const {estatus,mensaje} = await resp.json();
+                if(estatus){
+                    Swal.fire('Correcto', mensaje, 'success')
+                    obtenerMateriales()
+                }else{
+                    Swal.fire('Error', `Hubo un error al Deshabilitar El Material ${Nombre_Material}`, 'error')
+                }
+            })
+        } else if (result.isDenied) {
+          Swal.fire('Accion Cancelada', 'No Deshabilito El Material', 'error')
+        }
+      })
+    }
+
+    const habilitarMaterial = (ID_Material,Nombre_Material)=>{
+      Swal.fire({
+        title: `¿Seguro Que Quieres Habilitar El Material? ${Nombre_Material}`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Si, Habilitado',
+        denyButtonText: 'No, Cancelar',
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let timerInterval
+          Swal.fire({
+            title: 'Cargando',
+            html: `<div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>`,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading()
+              
+              timerInterval = setInterval(() => {
+               
+              }, 100)
+            },
+            willClose: () => {
+              clearInterval(timerInterval)
+            }
+          }).then((result) => {})
+            //Deshabilitar Proveedor
+            let formData = new FormData();
+            formData.append("tipo","habilitarDeshabilitarMaterial");
+            formData.append("id",ID_Material);
+            formData.append("accion",'Activo');
+
+            fetch(`${apiURL}configuraciones.php`,{
+                method: 'post',
+                body: formData
+            })
+            .then(async(resp) =>{
+                const {estatus,mensaje} = await resp.json();
+                if(estatus){
+                    Swal.fire('Correcto', mensaje, 'success')
+                    obtenerMateriales()
+                }else{
+                    Swal.fire('Error', `Hubo un error al Habilitar El Material ${Nombre_Material}`, 'error')
+                }
+            })
+        } else if (result.isDenied) {
+          Swal.fire('Accion Cancelada', 'No Se Habilito El Material', 'error')
+        }
+      })
+    }
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
@@ -252,6 +360,7 @@ export const Materiales = () => {
           <TableRow>
             <TableCell align="center">Nombre Del Material</TableCell>
             <TableCell align="center">Clave Del Material</TableCell>
+            <TableCell align="center">Estatus</TableCell>
             <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
@@ -260,7 +369,7 @@ export const Materiales = () => {
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={3}> <Skeleton /></TableCell>
             </TableRow>
-          :(materiales!=undefined) ? materiales.slice(pg * rpg, pg * rpg + rpg).map(({ID_Material,Nombre_Material,Clave_Material}) =>(
+          :(materiales!=undefined) ? materiales.slice(pg * rpg, pg * rpg + rpg).map(({ID_Material,Nombre_Material,Clave_Material,Estatus}) =>(
             <TableRow
               key={ID_Material}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -268,8 +377,12 @@ export const Materiales = () => {
               
               <TableCell align="center">{Nombre_Material}</TableCell>
               <TableCell align="center">{Clave_Material}</TableCell>
+              <TableCell align="center">{Estatus}</TableCell>
               <TableCell align="center">
                 <Button onClick={() => editarMaterial(ID_Material,Nombre_Material,Clave_Material)} title='Editar' key={`a${ID_Material}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
+              {(Estatus == 'Activo') ? 
+              <Button title='Baja' onClick={() => deshabilitarMaterial(ID_Material,Nombre_Material)} key={`b${ID_Material}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button> : 
+              <Button title='Habilitar' onClick={() => habilitarMaterial(ID_Material,Nombre_Material)} key={`c${ID_Material}`} variant="contained" color='success' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-check-circle"></i></Button>}
               </TableCell>
             </TableRow>
           )) : 

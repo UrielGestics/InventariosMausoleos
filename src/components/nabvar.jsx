@@ -103,7 +103,7 @@ const cambiartamanof = () =>{
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
                 <ListItemButton>
                   <ListItemIcon>
-                  <i className={arregloIconos[index]} style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}></i>
+                  <i id={text}  className={arregloIconos[index]} style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}></i>
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>

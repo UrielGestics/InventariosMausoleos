@@ -236,6 +236,115 @@ export const Tonalidades = () => {
         }
       })
     }
+
+    const deshabilitarTonalidad = (ID_Tonalidad,Nombre_Tonalidad) =>{
+      Swal.fire({
+        title: `¿Seguro Que Quieres Deshabilitar La Tonalidad? ${Nombre_Tonalidad}`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Si, Deshabilitada',
+        denyButtonText: 'No, Cancelar',
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let timerInterval
+          Swal.fire({
+            title: 'Cargando',
+            html: `<div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>`,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading()
+              
+              timerInterval = setInterval(() => {
+               
+              }, 100)
+            },
+            willClose: () => {
+              clearInterval(timerInterval)
+            }
+          }).then((result) => {})
+            //Deshabilitar Proveedor
+            let formData = new FormData();
+            formData.append("tipo","habilitarDeshabilitarTonalidad");
+            formData.append("id",ID_Tonalidad);
+            formData.append("accion",'Baja');
+
+            fetch(`${apiURL}configuraciones.php`,{
+                method: 'post',
+                body: formData
+            })
+            .then(async(resp) =>{
+                const {estatus,mensaje} = await resp.json();
+                if(estatus){
+                    Swal.fire('Correcto', mensaje, 'success')
+                    obtenertonalidades()
+                }else{
+                    Swal.fire('Error', `Hubo un error al Deshabilitar La Tonalidad ${Nombre_Tonalidad}`, 'error')
+                }
+            })
+        } else if (result.isDenied) {
+          Swal.fire('Accion Cancelada', 'No Se Deshabilito La Tonalidad', 'error')
+        }
+      })
+    }
+
+    const habilitarTonalidad = (ID_Tonalidad,Nombre_Tonalidad)=>{
+      Swal.fire({
+        title: `¿Seguro Que Quieres Habilitar La Tonalidad? ${Nombre_Tonalidad}`,
+        showDenyButton: true,
+        showCancelButton: false,
+        confirmButtonText: 'Si, Habilitada',
+        denyButtonText: 'No, Cancelar',
+        allowOutsideClick: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let timerInterval
+          Swal.fire({
+            title: 'Cargando',
+            html: `<div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>`,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading()
+              
+              timerInterval = setInterval(() => {
+               
+              }, 100)
+            },
+            willClose: () => {
+              clearInterval(timerInterval)
+            }
+          }).then((result) => {})
+            //Deshabilitar Proveedor
+            let formData = new FormData();
+            formData.append("tipo","habilitarDeshabilitarTonalidad");
+            formData.append("id",ID_Tonalidad);
+            formData.append("accion",'Activo');
+
+            fetch(`${apiURL}configuraciones.php`,{
+                method: 'post',
+                body: formData
+            })
+            .then(async(resp) =>{
+                const {estatus,mensaje} = await resp.json();
+                if(estatus){
+                    Swal.fire('Correcto', mensaje, 'success')
+                    obtenertonalidades()
+                }else{
+                    Swal.fire('Error', `Hubo un error al Habilitar La Tonalidad ${Nombre_Tonalidad}`, 'error')
+                }
+            })
+        } else if (result.isDenied) {
+          Swal.fire('Accion Cancelada', 'No Se Habilito La Tonalidad', 'error')
+        }
+      })
+    }
+
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
@@ -244,7 +353,7 @@ export const Tonalidades = () => {
   <BarraSuperior pag='Tonalidades' />
   <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
     <Toolbar />
-    <h3 style={{textAlign: 'center'}}>Lista De tonalidades</h3>
+    <h3 style={{textAlign: 'center'}}>Lista De Tonalidades</h3>
     {(!cargandotonalidades) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : <Button onClick={agregarTonalidad} title='Agregar Proveedor' key='AgregarPro' variant="contained" color='success' style={{float: 'right', marginBottom: '5px', color: 'white'}} size="small"><i className="bi bi-plus-circle" style={{marginRight : '10px'}}></i> Agregar Tonalidad</Button>}
     <SearchComponent placeholder='Buscar' onChangeHandle={(texto) =>requestSearch(texto)}/>
     <TableContainer component={Paper}>
@@ -253,6 +362,7 @@ export const Tonalidades = () => {
           <TableRow>
             <TableCell align="center">Nombre Del Tonalidad</TableCell>
             <TableCell align="center">Clave Del Tonalidad</TableCell>
+            <TableCell align="center">Estatus</TableCell>
             <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
@@ -261,7 +371,7 @@ export const Tonalidades = () => {
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={3}> <Skeleton /></TableCell>
             </TableRow>
-          :(tonalidades!=undefined) ? tonalidades.slice(pg * rpg, pg * rpg + rpg).map(({ID_Tonalidad,Nombre_Tonalidad,Clave_Tonalidad}) =>(
+          :(tonalidades!=undefined) ? tonalidades.slice(pg * rpg, pg * rpg + rpg).map(({ID_Tonalidad,Nombre_Tonalidad,Clave_Tonalidad,Estatus}) =>(
             <TableRow
               key={ID_Tonalidad}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -269,8 +379,12 @@ export const Tonalidades = () => {
               
               <TableCell align="center">{Nombre_Tonalidad}</TableCell>
               <TableCell align="center">{Clave_Tonalidad}</TableCell>
+              <TableCell align="center">{Estatus}</TableCell>
               <TableCell align="center">
                 <Button onClick={() => editarTonalidad(ID_Tonalidad,Nombre_Tonalidad,Clave_Tonalidad)} title='Editar' key={`a${ID_Tonalidad}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
+                {(Estatus == 'Activo') ? 
+              <Button title='Baja' onClick={() => deshabilitarTonalidad(ID_Tonalidad,Nombre_Tonalidad)} key={`b${ID_Tonalidad}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button> : 
+              <Button title='Habilitar' onClick={() => habilitarTonalidad(ID_Tonalidad,Nombre_Tonalidad)} key={`c${ID_Tonalidad}`} variant="contained" color='success' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-check-circle"></i></Button>}
               </TableCell>
             </TableRow>
           )) : 

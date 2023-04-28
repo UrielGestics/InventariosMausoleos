@@ -55,6 +55,7 @@ const irAPag = (text) =>{
   }else if(text == 'Administrador'){
     navigate('/inicio')
   }else{
+    console.log(text)
     navigate(`/${text}`)
   }
 }

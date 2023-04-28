@@ -37,14 +37,22 @@ export const Captura = () => {
     const [proveedoresNombre, setproveedoresNombre] = useState([])
     const [artProveedores, setartProveedores] = useState([])
     const [artProveedoresNombre, setartProveedoresNombre] = useState([])
+    const [artCeremoniasNombre, setartCeremoniasNombre] = useState([])
     const [material, setmaterial] = useState([])
     const [materialNombre, setmaterialNombre] = useState([])
     const [colores, setcolores] = useState([])
+    const [ceremonias, setceremonias] = useState([])
     const [coloresNombre, setcoloresNombre] = useState([])
     const [tonalidades, settonalidades] = useState([])
     const [tonalidadesNombre, settonalidadesNombre] = useState([])
-    const [claveProducto, setclaveProducto] = useState('')
+    const [ceremoniaNombre, setceremoniaNombre] = useState([])
+    const [ceremoniaNombre2, setceremoniaNombre2] = useState([])
+    //setartCeremoniaNombre
+    const [artCeremoniaNombre, setartCeremoniaNombre] = useState([])
+    //const [claveProducto, setclaveProducto] = useState('')
     const [codQR, setcodQR] = useState('')
+
+    const nArt = ['Ceremonia'];
 
     const darkTheme = createTheme({
         palette: {
@@ -68,6 +76,7 @@ export const Captura = () => {
         obtenerMateriales()
         obtenerColores()
         obtenerTonalidades()
+        obtenerCeremonias()
     }, [])
 
     //Validar Usuario Logeado
@@ -102,9 +111,33 @@ export const Captura = () => {
         setmaterialNombre(event.target.value)
     }
 
+    const cambioSelectArtCeremonia = (event) =>{
+        setartCeremoniaNombre(event.target.value)
+    }
+
+    //cambioSelectCeremoniasAritculos
+    const cambioSelectCeremoniasAritculos = (event) =>{
+        //setartProveedoresNombre(event.target.value)
+         const ID_Ceremonia = event.target.value
+         setceremoniaNombre2(ID_Ceremonia)
+        setartCeremoniasNombre(event.target.value)
+        setceremoniaNombre([])
+        fetch(`${apiURL}configuraciones.php?tipo=obtenerArtCeremonias&ID_Ceremonia=${ID_Ceremonia}`)
+        .then(async(resp) =>{
+            const finalResp = await resp.json();
+            if(finalResp.estatus){
+                setceremoniaNombre(finalResp[0])
+                console.log(finalResp[0])
+            }
+        })
+    }
+
+
     const cambioSelectProveedoresArituclos = (event) =>{
         setartProveedoresNombre(event.target.value)
     }
+
+    
 
     const cambioSelectProveedores = (event) =>{
         const proovedorID = event.target.value
@@ -129,6 +162,15 @@ export const Captura = () => {
             })
     }
 
+    const obtenerCeremonias = () => {
+        setartProveedores([])
+        fetch(`${apiURL}configuraciones.php?tipo=obtenerTodasCeremonias`)
+            .then(async(resp) => {
+                const finalResp = await resp.json();
+                setceremonias(finalResp[0]) 
+            })
+    }
+
     const obtenerColores = () => {
         setartProveedores([])
         fetch(`${apiURL}configuraciones.php?tipo=obtenerTodosColores`)
@@ -148,7 +190,7 @@ export const Captura = () => {
     }
 
     const generarCaptura = () =>{
-        if(document.getElementById('numberCantidad').value == 0 || document.getElementById('textNombreProducto').value == '' || proveedoresNombre == ''
+        if( proveedoresNombre == ''
            || artProveedoresNombre == '' || materialNombre == '' || coloresNombre == '' || tonalidadesNombre == ''){
             Swal.fire(
                 'error',
@@ -189,10 +231,12 @@ export const Captura = () => {
                     formData.append('colores',coloresNombre);
                     formData.append('tonalidades',tonalidadesNombre);
                     formData.append('claveProducto',proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad);
-                    formData.append('nombreProducto',document.getElementById('textNombreProducto').value);
+                    //formData.append('nombreProducto',document.getElementById('textNombreProducto').value);
                     formData.append('cantidad',document.getElementById('numberCantidad').value);
-                    formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
+                    //formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
                     formData.append('usuario',localStorage.id);
+                    formData.append('ceremonia',ceremoniaNombre2);
+                    formData.append('artCeremonia',artCeremoniaNombre);
                     formData.append('tipo','guardarCaptura');
             
                     fetch(`${apiURL}articulos.php`,{
@@ -311,13 +355,27 @@ export const Captura = () => {
       </FormControl>
       <hr />
       <FormControl fullWidth>
-      <InputLabel >Nombre Del Producto</InputLabel>
-          <FilledInput id="textNombreProducto"/>
-      </FormControl> 
+        <InputLabel id="demo-simple-select-label">Ceremonia</InputLabel>
+        <Select labelId="labelCeremonia" id="selectCeremonia" label="Ceremonia" onChange={cambioSelectCeremoniasAritculos}>
+            {ceremonias.map(({ID_Ceremonia,Portafolio}, idx) =>{
+                return(
+                <MenuItem key={ID_Ceremonia} value={ID_Ceremonia}>{Portafolio}</MenuItem>
+                );
+            })}
+          
+        </Select>
+      </FormControl>
       <hr />
       <FormControl fullWidth>
-      <InputLabel >Nombre Interno</InputLabel>
-          <FilledInput id="textNombreInterno"/>
+        <InputLabel id="demo-simple-select-label">Nombre Interno</InputLabel>
+        <Select labelId="labelNombreInterno" id="selectNombreInterno" label="Nombre Interno" onChange={cambioSelectArtCeremonia}>
+            {ceremoniaNombre.map(({ID_CeremoniasXArticulo,Nombre_Articulo}, idx) =>{
+                return(
+                <MenuItem key={ID_CeremoniasXArticulo} value={ID_CeremoniasXArticulo}>{Nombre_Articulo}</MenuItem>
+                );
+            })}
+          
+        </Select>
       </FormControl>
       <hr />
       <FormControl fullWidth>

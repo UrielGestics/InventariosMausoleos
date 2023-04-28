@@ -7,6 +7,12 @@ import { Reportes } from '../pages/reportes'
 import { Perfil } from '../pages/perfil'
 import { Captura } from '../pages/captura'
 import { Proveedores } from '../pages/proveedores'
+import { ProductosProveedor } from '../pages/productosProveedor'
+import { ProductosProveedorDeshabilitados } from '../pages/productosProveedorDeshabilitados'
+import { ProveedoresDeshabilitados } from '../pages/proveedoresDeshabilitados'
+import { Materiales } from '../pages/materiales'
+import { Colores } from '../pages/colores'
+import { Tonalidades } from '../pages/tonalidades'
 
 export const AppRouter = () => {
   return (
@@ -21,6 +27,12 @@ export const AppRouter = () => {
       <Route  path="Perfil" element = {<Perfil />}></Route>
       <Route  path="Captura" element = {<Captura />}></Route>
       <Route path="Proveedores" element = {<Proveedores />}></Route>
+      <Route path="productosProveedor/:id/:nombre" element = {<ProductosProveedor />}></Route>
+      <Route path="productosProveedorDeshabilitados/:id/:nombre" element = {<ProductosProveedorDeshabilitados />}></Route>
+      <Route path="proveedoresDeshabilitados" element = {<ProveedoresDeshabilitados />}></Route>
+      <Route path="Materiales" element = {<Materiales />}></Route>
+      <Route path="Colores" element = {<Colores />}></Route>
+      <Route path="Tonalidades" element = {<Tonalidades />}></Route>
     </Routes>
     </>
   )

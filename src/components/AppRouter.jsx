@@ -15,6 +15,8 @@ import { Colores } from '../pages/colores'
 import { Tonalidades } from '../pages/tonalidades'
 import { SucursalesPlaza } from '../pages/sucursalesPlaza'
 import { Ceremonias } from "../pages/ceremonias"
+import { ProductosCeremonia } from "../pages/productosCeremonia"
+import { ProductosCeremoniaDeshabilitados } from "../pages/productosCeremoniaDeshabilitados"
 
 export const AppRouter = () => {
   return (
@@ -30,8 +32,10 @@ export const AppRouter = () => {
       <Route  path="Captura" element = {<Captura />}></Route>
       <Route path="Proveedores" element = {<Proveedores />}></Route>
       <Route path="productosProveedor/:id/:nombre" element = {<ProductosProveedor />}></Route>
-      <Route path="sucursalesPlaza/:id/:nombre" element = {<SucursalesPlaza />}></Route>
       <Route path="productosProveedorDeshabilitados/:id/:nombre" element = {<ProductosProveedorDeshabilitados />}></Route>
+      <Route path="productosCeremonia/:id/:nombre" element = {<ProductosCeremonia />}></Route>
+      <Route path="productosCeremoniaDeshabilitados/:id/:nombre" element = {<ProductosCeremoniaDeshabilitados />}></Route>
+      <Route path="sucursalesPlaza/:id/:nombre" element = {<SucursalesPlaza />}></Route>
       <Route path="proveedoresDeshabilitados" element = {<ProveedoresDeshabilitados />}></Route>
       <Route path="Materiales" element = {<Materiales />}></Route>
       <Route path="Colores" element = {<Colores />}></Route>

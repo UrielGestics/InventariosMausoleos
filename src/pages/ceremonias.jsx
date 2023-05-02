@@ -230,11 +230,11 @@ export const Ceremonias = () => {
       })
     }
 
-    const iraPag = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedor/${ID}/${Nombre_Proveedor}`);
+    const  iraPag =(ID_Ceremonia,Portafolio) =>{
+      navigate(`/productosCeremonia/${ID_Ceremonia}/${Portafolio}`);
     }
-    const iraPag2 = (ID,Nombre_Proveedor) =>{
-      navigate(`/productosProveedorDeshabilitados/${ID}/${Nombre_Proveedor}`);
+    const  iraPag2 =(ID_Ceremonia,Portafolio) =>{
+      navigate(`/productosCeremoniaDeshabilitados/${ID_Ceremonia}/${Portafolio}`);
     }
 
   return (
@@ -270,8 +270,8 @@ export const Ceremonias = () => {
               <TableCell align="center">{Portafolio}</TableCell>
               <TableCell align="center">
               <Button onClick={() => editarCeremonia(ID_Ceremonia,Portafolio)} title='Editar' key={`a${ID_Ceremonia}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
-              {/* <Button onClick={() => iraPag(ID_Ceremonia,Nombre_Proveedor)} title='Ver Productos' key={`c${ID_Ceremonia}`} variant="contained" color='primary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye"></i></Button>
-              <Button onClick={() => iraPag2(ID_Ceremonia,Nombre_Proveedor)} title='Ver Productos Deshabilitados' key={`c${ID_Ceremonia}`} variant="contained" color='secondary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye-slash"></i></Button> */}
+              <Button onClick={() => iraPag(ID_Ceremonia,Portafolio)} title='Ver Productos' key={`c${ID_Ceremonia}`} variant="contained" color='primary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye"></i></Button>
+              <Button onClick={() => iraPag2(ID_Ceremonia,Portafolio)} title='Ver Productos Deshabilitados' key={`c${ID_Ceremonia}`} variant="contained" color='secondary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye-slash"></i></Button>
               </TableCell>
             </TableRow>
           )) : 

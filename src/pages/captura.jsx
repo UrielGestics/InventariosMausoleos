@@ -93,7 +93,7 @@ export const Captura = () => {
     }
 
     const obtenerProveedores = () =>{
-        fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedores`)
+        fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedoresActivos`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
             setproveedores(finalResp[0])

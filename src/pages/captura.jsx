@@ -47,10 +47,12 @@ export const Captura = () => {
     const [tonalidadesNombre, settonalidadesNombre] = useState([])
     const [ceremoniaNombre, setceremoniaNombre] = useState([])
     const [ceremoniaNombre2, setceremoniaNombre2] = useState([])
+    const [arregloQR, setarregloQR] = useState([])
     //setartCeremoniaNombre
     const [artCeremoniaNombre, setartCeremoniaNombre] = useState([])
     //const [claveProducto, setclaveProducto] = useState('')
     const [codQR, setcodQR] = useState('')
+    const [tipo, settipo] = useState('')
 
     const nArt = ['Ceremonia'];
 
@@ -222,8 +224,8 @@ export const Captura = () => {
                      const materiales = material.filter(mat => mat.ID_Material == materialNombre)
                      const color = colores.filter(col => col.ID_Color == coloresNombre)
                      const tona = tonalidades.filter(to => to.ID_Tonalidad == tonalidadesNombre)
-            
-                    
+                     
+                     for(let i = 1; i<=document.getElementById('numberCantidad').value; i++){
                     let formData = new FormData();
                     formData.append('pro',proveedoresNombre);
                     formData.append('artProv',artProveedoresNombre);
@@ -232,48 +234,68 @@ export const Captura = () => {
                     formData.append('tonalidades',tonalidadesNombre);
                     formData.append('claveProducto',proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad);
                     //formData.append('nombreProducto',document.getElementById('textNombreProducto').value);
-                    formData.append('cantidad',document.getElementById('numberCantidad').value);
+                    formData.append('cantidad',1);
                     //formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
+                    formData.append('tipo_ART',tipo);
                     formData.append('usuario',localStorage.id);
-                    formData.append('ceremonia',ceremoniaNombre2);
-                    formData.append('artCeremonia',artCeremoniaNombre);
+                    if(tipo == 'Urna'){
+                        formData.append('ceremonia',999);
+                        formData.append('artCeremonia',999); 
+                    }else{
+                        formData.append('ceremonia',ceremoniaNombre2);
+                        formData.append('artCeremonia',artCeremoniaNombre);
+                    }
+                    
+                    formData.append('incrementa',i);
                     formData.append('tipo','guardarCaptura');
-            
-                    fetch(`${apiURL}articulos.php`,{
-                        method: 'post',
-                        body: formData
-                    })
-                    .then(async(resp) => {
-                        const {estatus,mensaje} = await resp.json();
-                        Swal.close()
-                        if(estatus == true){
-                          Swal.fire(
-                            'Exito',
-                            mensaje,
-                            'success'
-                          )
-                          setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
-                        }else{
-                          Swal.fire(
-                            'Error',
-                            mensaje,
-                            'error'
-                          )
-                        }
-                      })
-                      .catch(err => {
-                        Swal.fire(
-                          'Error',
-                          'Hubo un error, por favor intentalo de nuevo 2'+err,
-                          'error'
-                        )
-                      })
+
+                    
+                        fetch(`${apiURL}articulos.php`,{
+                            method: 'post',
+                            body: formData
+                        })
+                        .then(async(resp) => {
+                            const {estatus,mensaje,QR} = await resp.json();
+                           
+                            if(estatus == true){
+                                if(i==document.getElementById('numberCantidad').value){
+                                    Swal.close()
+                                    Swal.fire(
+                                        'Exito',
+                                        mensaje,
+                                        'success'
+                                      )
+                                }else{}
+                              
+                              
+                              setarregloQR(arregloQR=>[...arregloQR,QR])
+                              
+                             // setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
+                            }else{
+                                Swal.close()
+                              Swal.fire(
+                                'Error',
+                                mensaje,
+                                'error'
+                              )
+                            }
+                          })
+                          .catch(err => {
+                            Swal.close()
+                            Swal.fire(
+                              'Error',
+                              'Hubo un error, por favor intentalo de nuevo 2'+err,
+                              'error'
+                            )
+                          })
+                    }
+                    
         }
     }
 
     const imprimirQr = () =>{
         var win = window.open('', '', 'height=700,width=700'); // Open the window. Its a popup window.
-            win.document.write(document.getElementById("mainImg").outerHTML);     // Write contents in the new window.
+            win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
             win.document.close();
             win.print();
             win.addEventListener("afterprint", (event) => {
@@ -284,6 +306,18 @@ export const Captura = () => {
                 }, 1000);
             })
     }
+
+    const cambioSelectTipo = (event) =>{
+        settipo(event.target.value)
+        if(event.target.value == 'Urna'){
+            document.getElementById("hideShowCeremonia").style.display = "none";
+            document.getElementById("hideShowNombreInterno").style.display = "none";
+        }else{
+            document.getElementById("hideShowCeremonia").style.display = "block";
+            document.getElementById("hideShowNombreInterno").style.display = "block";
+        }
+    }
+
     
   return (
        <ThemeProvider theme={darkTheme} >
@@ -294,6 +328,14 @@ export const Captura = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <Toolbar />
         <h3 style={{textAlign: 'center'}}>Captura De Inventarios</h3>
+        <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Tipo Articulo</InputLabel>
+        <Select labelId="labelProveedor" id="selectProveedor" label="Articulo" onChange={cambioSelectTipo}>
+            <MenuItem key={1} value='Ataud'>Ataud</MenuItem>
+            <MenuItem key={2} value='Urna'>Urna</MenuItem>
+        </Select>
+      </FormControl>
+      <hr />
         <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Proveedor</InputLabel>
         <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
@@ -354,7 +396,8 @@ export const Captura = () => {
         </Select>
       </FormControl>
       <hr />
-      <FormControl fullWidth>
+      <div id="hideShowCeremonia">
+      <FormControl fullWidth >
         <InputLabel id="demo-simple-select-label">Ceremonia</InputLabel>
         <Select labelId="labelCeremonia" id="selectCeremonia" label="Ceremonia" onChange={cambioSelectCeremoniasAritculos}>
             {ceremonias.map(({ID_Ceremonia,Portafolio}, idx) =>{
@@ -366,7 +409,9 @@ export const Captura = () => {
         </Select>
       </FormControl>
       <hr />
-      <FormControl fullWidth>
+      </div>
+      <div id="hideShowNombreInterno">
+      <FormControl fullWidth >
         <InputLabel id="demo-simple-select-label">Nombre Interno</InputLabel>
         <Select labelId="labelNombreInterno" id="selectNombreInterno" label="Nombre Interno" onChange={cambioSelectArtCeremonia}>
             {ceremoniaNombre.map(({ID_CeremoniasXArticulo,Nombre_Articulo}, idx) =>{
@@ -378,13 +423,20 @@ export const Captura = () => {
         </Select>
       </FormControl>
       <hr />
+      </div>
       <FormControl fullWidth>
       <InputLabel >Cantidad</InputLabel>
           <FilledInput id="numberCantidad" type='number'/>
       </FormControl>
       <hr />
-      {(codQR == '') ?'' :<QRious id="mainImg" value={codQR} size={250}  foreground='black' level='H'  />}
-      {(codQR == '') ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
+      <div id='QRS'>
+      {(arregloQR.length == 0) ?'' :
+      arregloQR.map(qr =>{
+        return(<QRious class="mainImg" value={qr} size={250} style={{marginLeft: '50px', marginTop:'30px'}}  foreground='black' level='H'  />)
+      })
+      }
+</div>
+      {(arregloQR.length == 0) ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
       : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}
      
 

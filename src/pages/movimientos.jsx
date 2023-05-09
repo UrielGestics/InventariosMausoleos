@@ -37,8 +37,14 @@ export const Movimientos = () => {
   const navigate = useNavigate();
 
     const [obscuro, setobscuro] = useState()
-    const [data, setData] = useState('');
     const [camOpen, setCamOpen] = useState(false);
+    const [nombre, setNombre] = useState('');
+    const [tipo, setTipo] = useState('');
+    const [color, setColor] = useState('');
+    const [material, setMaterial] = useState('');
+    const [ceremonia, setCeremonia] = useState('');
+    const [artCeremonia, setArtCeremonia] = useState('');
+    const [estatus, setEstatus] = useState('');
 
 
     const darkTheme = createTheme({
@@ -60,6 +66,7 @@ export const Movimientos = () => {
     useEffect(() => {
         validarModoOscuro()
         validarNotLoggedPage()
+        //obtenerQR("120230502111503GAM-ESC-MAD-DPC")
     }, [])
     
     const  validarNotLoggedPage = () => {
@@ -70,8 +77,29 @@ export const Movimientos = () => {
 
   const leerQR = ()=>{
     setCamOpen(!camOpen)
-
   }
+
+  const obtenerQR= (codQRResult)=>{
+    fetch(`${apiURL}articulos.php?tipo=obtenerArticuloQR&codQR=${codQRResult}`)
+    .then(async(resp) => {
+      const finalResp = await resp.json()
+      console.log(finalResp)
+      if(finalResp.estatus){
+        setCamOpen(false)
+        document.getElementById("codigoQR").value = codQRResult
+        setNombre(finalResp[0][0].Clave_Articulo)
+        setTipo(finalResp[0][0].Tipo_Articulo)
+        setColor(finalResp[0][0].Nombre_Color)
+        setMaterial(finalResp[0][0].Nombre_Material)
+        setEstatus(finalResp[0][0].Estatus)
+        setCeremonia(finalResp[0][0].Portafolio)
+        setArtCeremonia(finalResp[0][0].Nombre_Articulo)
+      }else{
+
+      }
+    })
+  }
+
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
@@ -91,7 +119,9 @@ export const Movimientos = () => {
       constraints={{ facingMode: 'environment' }}
       onResult={(result, error) => {
         if (!!result) {
-          setData(result?.text);
+          const codQRResult = result?.text
+          //Consultar API ART CON COD QR
+          obtenerQR(codQRResult)
         }
 
         if (!!error) {
@@ -100,16 +130,46 @@ export const Movimientos = () => {
       }}
       style={{ width: '100%' }}
     />
-    <p>{data}</p>
     <hr />
       </>
       :
       ''
       }
     <FormControl fullWidth>
-      <InputLabel >Codigo QR</InputLabel>
-          <FilledInput id="codigoQR" type='text'/>
-      </FormControl>
+        <FilledInput id="codigoQR" placeholder='Codigo QR' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={nombre} readOnly placeholder='Nombre' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={tipo} readOnly placeholder='Tipo' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={color} readOnly placeholder='Color' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={material} readOnly placeholder='Material' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={estatus} readOnly placeholder='Estado' type='text'/>
+    </FormControl>
+    {(tipo == 'Ataud') ?
+    <div>
+      <hr />
+    <FormControl fullWidth>
+        <FilledInput value={ceremonia} readOnly placeholder='Ceremonia' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={artCeremonia} readOnly placeholder='Ceremonia' type='text'/>
+    </FormControl>
+    </div>
+    : ''}
   </Box>
 </Box>
     </ThemeProvider>

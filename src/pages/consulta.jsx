@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+//Navegación
 import { useNavigate } from 'react-router-dom';
 
 //Modo Oscuro
@@ -9,13 +10,39 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 //MaterialUI
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import TablePagination from "@mui/material/TablePagination";
+import SearchComponent from "react-material-ui-searchbar";
+
+import CircularProgress from '@mui/material/CircularProgress';
+import Skeleton from '@mui/material/Skeleton';
+
+//SweetAlert
+import Swal from 'sweetalert2';
+
+
+
+
+//Funciones Propias
+import { apiURL } from '../functiones'
 
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
 
 export const Consulta = () => {
     const [obscuro, setobscuro] = useState()
+    const [articulos, setarticulos] = useState([])
+    const [articulosCopia, setarticulosCopia] = useState([])
+    const [cargandoarticulos, setCargandoarticulos] = useState(false)
+    const [pg, setpg] = React.useState(0);
+    const [rpg, setrpg] = React.useState(5);
     const darkTheme = createTheme({
         palette: {
             mode: obscuro,
@@ -32,7 +59,9 @@ export const Consulta = () => {
             setobscuro('light')
         } 
     }
-    useEffect(() => {validarModoOscuro()}, [])
+    useEffect(() => {
+        validarModoOscuro()
+        obtenerarticulos()}, [])
 
     //Validar Usuario Logeado
     const navigate = useNavigate();
@@ -47,6 +76,36 @@ export const Consulta = () => {
         }
     }
 
+    const obtenerarticulos = () =>{
+        fetch(`${apiURL}articulos.php?tipo=obtenerTodosArticulos`)
+        .then(async(resp) =>{
+            const finalResp = await resp.json();
+            setarticulos(finalResp[0])
+            setCargandoarticulos(true)
+            setarticulosCopia(finalResp[0])
+        })
+    } 
+  
+    function handleChangePage(event, newpage) {
+        setpg(newpage);
+    }
+  
+    function handleChangeRowsPerPage(event) {
+        setrpg(parseInt(event.target.value, 10));
+        setpg(0);
+    }
+
+    const requestSearch = (texto) => {
+        if(texto == ''){
+            obtenerarticulos()
+        }else{
+            const filteredRows = articulosCopia.filter((row) => {
+                return row.Portafolio.toLowerCase().includes(texto.toLowerCase())
+              });
+              setarticulos(filteredRows)
+        }
+      }
+
     return (
         <ThemeProvider theme={darkTheme} >
         <CssBaseline />
@@ -55,7 +114,78 @@ export const Consulta = () => {
       <BarraSuperior pag='Consulta' />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-      <iframe title="Report Section" width="1000" height="800" src="https://app.powerbi.com/view?r=eyJrIjoiNjljOTQ5MmUtYWM3Mi00ZWM2LTkxMjYtMDMzYTc1N2U5MWQ4IiwidCI6IjBmM2RjM2FhLTQ0MWQtNGU2YS1iMWQzLWM0YTBlMjMxMzQ2MiJ9" frameborder="0" allowFullScreen="true"></iframe>
+      {/* <iframe title="Report Section" width="1000" height="800" src="https://app.powerbi.com/view?r=eyJrIjoiNjljOTQ5MmUtYWM3Mi00ZWM2LTkxMjYtMDMzYTc1N2U5MWQ4IiwidCI6IjBmM2RjM2FhLTQ0MWQtNGU2YS1iMWQzLWM0YTBlMjMxMzQ2MiJ9" frameborder="0" allowFullScreen="true"></iframe> */}
+      <h3 style={{textAlign: 'center'}}>Lista De Articulos</h3>
+    {(!cargandoarticulos) ? <CircularProgress color="success" style={{float: 'right', marginBottom: '5px'}}  /> : ''}
+    <SearchComponent placeholder='Buscar' onChangeHandle={(texto) =>requestSearch(texto)}/>
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">ID Articulo</TableCell>
+            <TableCell align="center">Nombre Del Articulo</TableCell>
+            <TableCell align="center">Tipo De Articulo</TableCell>
+            <TableCell align="center">Clave De Articulo</TableCell>
+            <TableCell align="center">Cantidad</TableCell>
+            <TableCell align="center">Color</TableCell>
+            <TableCell align="center">Material</TableCell>
+            <TableCell align="center">Tonalidad</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {(!cargandoarticulos) ?
+            <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell align="center" colSpan={8}> <Skeleton /></TableCell>
+            </TableRow>
+          :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({ID_Articulo,Portafolio,Tipo_Articulo,Clave_Articulo,Cantidad,
+            Nombre_Color,Nombre_Material,Nombre_Tonalidad}) =>(
+            <TableRow
+              key={ID_Articulo}
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              
+              <TableCell align="center">{ID_Articulo}</TableCell>
+              <TableCell align="center">{Portafolio}</TableCell>
+              <TableCell align="center">{Tipo_Articulo}</TableCell>
+              <TableCell align="center">{Clave_Articulo}</TableCell>
+              <TableCell align="center">{Cantidad}</TableCell>
+              <TableCell align="center">{Nombre_Color}</TableCell>
+              <TableCell align="center">{Nombre_Material}</TableCell>
+              <TableCell align="center">{Nombre_Tonalidad}</TableCell>
+              
+            </TableRow>
+          )) : 
+          <TableRow
+              key='SIN Datos'
+              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+            >
+              
+              <TableCell align="center" colSpan={3}><b id="nDatos" style={{fontSize: '20px'}}>No Hay Datos</b></TableCell>
+            </TableRow>
+          }
+        </TableBody>
+        {(articulos!=undefined) ? 
+        <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                labelRowsPerPage='Resultados Por Página'
+                count={articulos.length}
+                rowsPerPage={rpg}
+                page={pg}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+            />: 
+            <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            labelRowsPerPage='Resultados Por Página'
+            count={0}
+            rowsPerPage={rpg}
+            page={pg}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+        />}
+       </Table>
+    </TableContainer>
+      
       </Box>
     </Box>
         </ThemeProvider>

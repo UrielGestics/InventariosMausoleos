@@ -35,6 +35,8 @@ export const Captura = () => {
     const [obscuro, setobscuro] = useState()
     const [proveedores, setproveedores] = useState([])
     const [proveedoresNombre, setproveedoresNombre] = useState([])
+    const [plazas, setplazas] = useState([])
+    const [plazasNombre, setplazasNombre] = useState([])
     const [artProveedores, setartProveedores] = useState([])
     const [artProveedoresNombre, setartProveedoresNombre] = useState([])
     const [artCeremoniasNombre, setartCeremoniasNombre] = useState([])
@@ -79,6 +81,7 @@ export const Captura = () => {
         obtenerColores()
         obtenerTonalidades()
         obtenerCeremonias()
+        obtenerPlazas()
     }, [])
 
     //Validar Usuario Logeado
@@ -101,6 +104,18 @@ export const Captura = () => {
             setproveedores(finalResp[0])
         })
     } 
+
+    const cambioSelectPlazas = (event) =>{
+        setplazasNombre(event.target.value)
+    }
+
+    const obtenerPlazas = () =>{
+        fetch(`${apiURL}plazas.php?tipo=obtenerTodasSucursalesPlazas`)
+        .then(async(resp) =>{
+            const finalResp = await resp.json();
+            setplazas(finalResp[0])
+        })
+    }
 
     const cambioSelectTonalidade = (event) =>{
         settonalidadesNombre(event.target.value)
@@ -235,6 +250,8 @@ export const Captura = () => {
                     formData.append('claveProducto',proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad);
                     //formData.append('nombreProducto',document.getElementById('textNombreProducto').value);
                     formData.append('cantidad',1);
+                    formData.append('costo',document.getElementById('numberCosto').value);
+                    formData.append('plaza',plazasNombre);
                     //formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
                     formData.append('tipo_ART',tipo);
                     formData.append('usuario',localStorage.id);
@@ -349,6 +366,18 @@ export const Captura = () => {
       </FormControl>
       <hr />
       <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Plaza</InputLabel>
+        <Select labelId="labelProveedor" id="selectPlazas" label="Proveedor" onChange={cambioSelectPlazas}>
+            {plazas.map(({ID_Plaza,Plaza,Clave}, idx) =>{
+                return(
+                <MenuItem data-clave={Clave} key={ID_Plaza} value={ID_Plaza}>{Plaza}</MenuItem>
+                );
+            })}
+          
+        </Select>
+      </FormControl>
+      <hr />
+      <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Aritculo Del Proveedor</InputLabel>
         <Select labelId="labelArticuloProveedor" id="selectArticuloProveedor" label="Arituclo Del Proveedor" onChange={cambioSelectProveedoresArituclos}>
             {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo }, idx) =>{
@@ -427,6 +456,11 @@ export const Captura = () => {
       <FormControl fullWidth>
       <InputLabel >Cantidad</InputLabel>
           <FilledInput id="numberCantidad" type='number'/>
+      </FormControl>
+      <hr />
+      <FormControl fullWidth>
+      <InputLabel >Costo</InputLabel>
+          <FilledInput id="numberCosto" type='number'/>
       </FormControl>
       <hr />
       <div id='QRS'>

@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 //50
-const arregloIconos = ['bi bi-emoji-sunglasses','bi bi-geo-alt','bi bi-file-bar-graph-fill']
+const arregloIconos = ['bi bi-emoji-sunglasses','bi bi-geo-alt','bi bi-file-bar-graph-fill','bi bi-wallet']
 const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
 const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
 const arregloIconosConfiguraciones = ['bi bi-people','bi bi-person-x','bi bi-brightness-alt-high-fill','bi bi-box-seam','bi bi-palette','bi bi-paint-bucket']
@@ -56,6 +56,8 @@ const irAPag = (text) =>{
     navigate('/inicio')
   }else if(text == 'Proveedores Deshabilitados'){
     navigate('/proveedoresDeshabilitados')
+  }else if(text == 'Inventario Plaza'){
+    navigate('/inventarioPlaza')
   }else{
     console.log(text)
     navigate(`/${text}`)
@@ -100,7 +102,7 @@ const cambiartamanof = () =>{
         <Box sx={{ overflow: 'auto' }}>
         <h4 style={{textAlign: 'center'}}>{ ( cambiartamano == 240) ? 'Principal' : ''}</h4>
           <List>
-            {['Administrador', 'Plazas', 'Reportes'].map((text, index) => (
+            {['Administrador', 'Plazas', 'Reportes', 'Inventario Plaza'].map((text, index) => (
               <ListItem key={text} disablePadding onClick={() =>irAPag(text) } style= {(text == active) ? (mOscuro == 'true') ?{ backgroundColor: '#B49A37' } : { backgroundColor: '#9b7c0a', color: 'white' } : {}}>
                 <ListItemButton>
                   <ListItemIcon>

@@ -19,6 +19,8 @@ import { ProductosCeremonia } from "../pages/productosCeremonia"
 import { ProductosCeremoniaDeshabilitados } from "../pages/productosCeremoniaDeshabilitados"
 import { Consulta } from "../pages/consulta"
 import { Movimientos } from "../pages/movimientos"
+import { InventarioPlaza } from "../pages/inventarioPlaza"
+
 
 
 export const AppRouter = () => {
@@ -45,6 +47,7 @@ export const AppRouter = () => {
       <Route path="Colores" element = {<Colores />}></Route>
       <Route path="Tonalidades" element = {<Tonalidades />}></Route>
       <Route path="Movimientos" element = {<Movimientos />}></Route>
+      <Route path="inventarioPlaza" element = {<InventarioPlaza />}></Route>
       <Route path="Ceremonias" element={ <Ceremonias /> }></Route>
     </Routes>
     </>

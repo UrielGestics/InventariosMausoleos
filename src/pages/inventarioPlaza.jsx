@@ -118,6 +118,16 @@ export const InventarioPlaza = () => {
         })
     }
 
+    const obtenerCostoTotalArticulosFiltro = (plaza) =>{
+      console.log(plaza)
+      fetch(`${apiURL}articulos.php?tipo=obtenerCostoTotalArticulosFiltro&plaza=${plaza}`)
+      .then(async(resp) =>{
+          const finalResp = await resp.json();
+         
+          setTotalArticulos(finalResp[0][0].Suma)
+      })
+  }
+
     const requestSearch = (texto) => {
         if(texto == ''){
             obtenerarticulos()
@@ -139,6 +149,7 @@ export const InventarioPlaza = () => {
                 setarticulos(finalResp[0])
                 setCargandoarticulos(true)
                 setarticulosCopia(finalResp[0])
+                obtenerCostoTotalArticulosFiltro(event.target.value)
             })
         }
         

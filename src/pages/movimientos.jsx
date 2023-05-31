@@ -34,6 +34,7 @@ import { apiURL } from '../functiones'
 import { BarraSuperior }  from '../components/barraSuperios';
 
 export const Movimientos = () => {
+  const mOscuro = localStorage.oscuro
   const navigate = useNavigate();
 
     const [obscuro, setobscuro] = useState()
@@ -45,6 +46,8 @@ export const Movimientos = () => {
     const [ceremonia, setCeremonia] = useState('');
     const [artCeremonia, setArtCeremonia] = useState('');
     const [estatus, setEstatus] = useState('');
+    const [plaza, setplaza] = useState('')
+    const [selectPlaza, setselectPlaza] = useState('')
 
 
     const darkTheme = createTheme({
@@ -66,7 +69,7 @@ export const Movimientos = () => {
     useEffect(() => {
         validarModoOscuro()
         validarNotLoggedPage()
-        //obtenerQR("120230502111503GAM-ESC-MAD-DPC")
+        obtenerQR("120230502111914GAM-GAL-CER-ENM")
     }, [])
     
     const  validarNotLoggedPage = () => {
@@ -83,11 +86,11 @@ export const Movimientos = () => {
     fetch(`${apiURL}articulos.php?tipo=obtenerArticuloQR&codQR=${codQRResult}`)
     .then(async(resp) => {
       const finalResp = await resp.json()
-      console.log(finalResp)
       if(finalResp.estatus){
         setCamOpen(false)
         document.getElementById("codigoQR").value = codQRResult
         setNombre(finalResp[0][0].Clave_Articulo)
+        obtenerSucursalPlaza(finalResp[0][0].ID_Plaza)
         setTipo(finalResp[0][0].Tipo_Articulo)
         setColor(finalResp[0][0].Nombre_Color)
         setMaterial(finalResp[0][0].Nombre_Material)
@@ -96,6 +99,82 @@ export const Movimientos = () => {
         setArtCeremonia(finalResp[0][0].Nombre_Articulo)
       }else{
 
+      }
+    })
+  }
+
+  const obtenerSucursalPlaza = (plaza2)=>{
+    fetch(`${apiURL}plazas.php?tipo=obtenerSucursalesPlazas&ID_Plaza=${plaza2}`)
+    .then(async(resp) => {
+      const finalResp = await resp.json()
+      if(finalResp.estatus){
+        setplaza(finalResp[0])
+        //setselectPlaza(JSON.stringify(finalResp[0][0]))
+        let option  = '';
+        finalResp[0].map(({ID_Sucursal,Nombre_Sucursal}) =>{
+          option += `<option value='${ID_Sucursal}'>${Nombre_Sucursal}</option>`
+          
+        })
+        setselectPlaza(option)
+        
+      }else{}
+    })
+  }
+
+  const moverSucursal = ()=>{
+    Swal.fire({
+      allowOutsideClick: false,
+      title: `Mover a Sucursal`,
+      html: `<label>Sucursal</label>
+      <br />
+      <select class="form-select" id="plaza" aria-label="Default select example">
+        ${selectPlaza}
+        </Select>
+      <hr>
+      <label>Motivo</label>
+      <br />
+      <select class="form-select" id="motivo" aria-label="Default select example">
+        <option value='Salida Temporal'>Salida Temporal</option>
+        <option value='Entrada'>Entrada</option>
+        <option value='Salida'>Salida</option>
+        <option value='Baja'>Baja</option>
+        </Select>
+      `,
+      confirmButtonText: 'Mover',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if(result.isDismissed){
+        Swal.fire('Accion Cancelada', 'No Se Realizo la acción', 'error')
+      }else{
+        
+          const motivo = Swal.getPopup().querySelector('#motivo').value
+          const plaza = Swal.getPopup().querySelector('#plaza').value
+          if (!motivo || !plaza) {
+            Swal.showValidationMessage(`Porfavor llena toda la información`)
+          }else{
+            let timerInterval
+        Swal.fire({
+          title: 'Cargando',
+          html: `<div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>`,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading()
+            
+            timerInterval = setInterval(() => {
+             
+            }, 100)
+          },
+          willClose: () => {
+            clearInterval(timerInterval)
+          }
+        }).then((result) => {})
+            //Hacer Petición API
+            console.log(motivo,plaza,localStorage.id)
+          }
       }
     })
   }
@@ -121,7 +200,7 @@ export const Movimientos = () => {
         if (!!result) {
           const codQRResult = result?.text
           //Consultar API ART CON COD QR
-          obtenerQR(codQRResult)
+          //obtenerQR(codQRResult)
         }
 
         if (!!error) {
@@ -167,6 +246,10 @@ export const Movimientos = () => {
     <hr />
     <FormControl fullWidth>
         <FilledInput value={artCeremonia} readOnly placeholder='Ceremonia' type='text'/>
+    </FormControl>
+    <hr />
+    <FormControl fullWidth>
+    <Button onClick={moverSucursal} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Mover a Sucursal</b></Button>
     </FormControl>
     </div>
     : ''}

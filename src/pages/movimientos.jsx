@@ -47,6 +47,7 @@ export const Movimientos = () => {
     const [artCeremonia, setArtCeremonia] = useState('');
     const [estatus, setEstatus] = useState('');
     const [plaza, setplaza] = useState('')
+    const [idArticulo, setidArticulo] = useState('')
     const [selectPlaza, setselectPlaza] = useState('')
 
 
@@ -97,6 +98,7 @@ export const Movimientos = () => {
         setEstatus(finalResp[0][0].Estatus)
         setCeremonia(finalResp[0][0].Portafolio)
         setArtCeremonia(finalResp[0][0].Nombre_Articulo)
+        setidArticulo(finalResp[0][0].ID_Articulo)
       }else{
 
       }
@@ -173,7 +175,22 @@ export const Movimientos = () => {
           }
         }).then((result) => {})
             //Hacer Petición API
-            console.log(motivo,plaza,localStorage.id)
+            let formData = new FormData();
+            formData.append('ID_Usuario',localStorage.id);
+            formData.append("ID_Articulo",idArticulo)
+            formData.append("ID_Sucursal",plaza)
+            formData.append("Motivo",motivo)
+            formData.append("tipo","moveraSucursal")
+
+            fetch(`${apiURL}movimientos.php`,{
+              method: 'post',
+              body: formData
+          }).then(async(resp) =>{
+            const {estatus,mensaje} = await resp.json();
+            if(estatus){
+              Swal.fire('Accion Completada', mensaje, 'success').then(resp =>{location.reload();})
+            }
+          });
           }
       }
     })

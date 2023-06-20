@@ -70,7 +70,7 @@ export const Movimientos = () => {
     useEffect(() => {
         validarModoOscuro()
         validarNotLoggedPage()
-        obtenerQR("120230502111914GAM-GAL-CER-ENM")
+        //obtenerQR("120230612104115GAM-MAG-MAD-NGCO")
     }, [])
     
     const  validarNotLoggedPage = () => {
@@ -196,6 +196,12 @@ export const Movimientos = () => {
     })
   }
 
+  const handleKeyPress = (event) => {
+    if(event.code === 'Enter'){
+      const qrValor = document.getElementById("codigoQR").value;
+      obtenerQR(qrValor)
+    }
+  }
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
@@ -217,7 +223,7 @@ export const Movimientos = () => {
         if (!!result) {
           const codQRResult = result?.text
           //Consultar API ART CON COD QR
-          //obtenerQR(codQRResult)
+          obtenerQR(codQRResult)
         }
 
         if (!!error) {
@@ -232,7 +238,7 @@ export const Movimientos = () => {
       ''
       }
     <FormControl fullWidth>
-        <FilledInput id="codigoQR" placeholder='Codigo QR' type='text'/>
+        <FilledInput id="codigoQR" onKeyUp={() => handleKeyPress(event)}  placeholder='Codigo QR' type='text'/>
     </FormControl>
     <hr />
     <FormControl fullWidth>

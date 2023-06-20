@@ -254,6 +254,7 @@ export const Captura = () => {
                     formData.append('plaza',plazasNombre);
                     //formData.append('nombreInterno',document.getElementById('textNombreInterno').value);
                     formData.append('tipo_ART',tipo);
+                    
                     formData.append('usuario',localStorage.id);
                     if(tipo == 'Urna'){
                         formData.append('ceremonia',999);
@@ -287,7 +288,7 @@ export const Captura = () => {
                               
                               setarregloQR(arregloQR=>[...arregloQR,QR])
                               
-                             // setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
+                              //setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
                             }else{
                                 Swal.close()
                               Swal.fire(
@@ -325,6 +326,7 @@ export const Captura = () => {
     }
 
     const cambioSelectTipo = (event) =>{
+       
         settipo(event.target.value)
         if(event.target.value == 'Urna'){
             document.getElementById("hideShowCeremonia").style.display = "none";
@@ -347,9 +349,10 @@ export const Captura = () => {
         <h3 style={{textAlign: 'center'}}>Captura De Inventarios</h3>
         <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Tipo Articulo</InputLabel>
-        <Select labelId="labelProveedor" id="selectProveedor" label="Articulo" onChange={cambioSelectTipo}>
+        <Select labelId="labelProveedor" id="selectTipoArtiuclo" label="Articulo" onChange={cambioSelectTipo}>
             <MenuItem key={1} value='Ataud'>Ataud</MenuItem>
             <MenuItem key={2} value='Urna'>Urna</MenuItem>
+            <MenuItem key={3} value='Relicario'>Relicario</MenuItem>
         </Select>
       </FormControl>
       <hr />
@@ -378,7 +381,7 @@ export const Captura = () => {
       </FormControl>
       <hr />
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Aritculo Del Proveedor</InputLabel>
+        <InputLabel id="demo-simple-select-label">Articulo Del Proveedor</InputLabel>
         <Select labelId="labelArticuloProveedor" id="selectArticuloProveedor" label="Arituclo Del Proveedor" onChange={cambioSelectProveedoresArituclos}>
             {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo }, idx) =>{
                 return(

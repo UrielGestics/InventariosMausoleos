@@ -20,6 +20,7 @@ import { ProductosCeremoniaDeshabilitados } from "../pages/productosCeremoniaDes
 import { Consulta } from "../pages/consulta"
 import { Movimientos } from "../pages/movimientos"
 import { InventarioPlaza } from "../pages/inventarioPlaza"
+import { Recepción } from "../pages/recepción"
 
 
 
@@ -35,6 +36,7 @@ export const AppRouter = () => {
       <Route  path="Reportes" element = {<Reportes />}></Route>
       <Route  path="Perfil" element = {<Perfil />}></Route>
       <Route  path="Captura" element = {<Captura />}></Route>
+      <Route  path="Recepción" element = {<Recepción />}></Route>
       <Route  path="Consulta" element = {<Consulta />}></Route>
       <Route path="Proveedores" element = {<Proveedores />}></Route>
       <Route path="productosProveedor/:id/:nombre" element = {<ProductosProveedor />}></Route>

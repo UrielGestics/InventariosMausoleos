@@ -114,8 +114,16 @@ export const Recepción = () => {
           fetch(`${apiURL}articulos.php?tipo=obtenerArtXCA&claveProducto=${valorCA}`)
           .then(async(resp)=>{
             const finalresp = await resp.json();
-            const {Tipo_Articulo,ID_Proveedor,ID_Plaza,ID_ArticuloXProveedor,ID_Material,ID_Color,ID_Tonalidad,ID_Ceremonia,ID_CeremoniasXArticulo} = finalresp[0][0]
-            console.log(Tipo_Articulo)
+            const {Tipo_Articulo,Nombre_Proveedor,Plaza,Nombre_Articulo,Nombre_Material,Nombre_Color,Nombre_Tonalidad,Portafolio,Nombre_ArticuloCeremonia} = finalresp[0][0]
+            settipo(Tipo_Articulo)
+            setproveedores(Nombre_Proveedor)
+            setplazas(Plaza)
+            setartProveedores(Nombre_Articulo)
+            setmaterial(Nombre_Material)
+            setcolores(Nombre_Color)
+            settonalidades(Nombre_Tonalidad)
+            setceremoniaNombre(Portafolio)
+            setceremoniaNombre2(Nombre_ArticuloCeremonia)
           })
         }
       }
@@ -126,123 +134,66 @@ export const Recepción = () => {
         <CssBaseline />
         <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <BarraSuperior pag='Recepcion' />
+      <BarraSuperior pag='Recepción' />
       <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <Toolbar />
         <h3 style={{textAlign: 'center'}}>Recepción</h3>
         <FormControl fullWidth>
-      <InputLabel >Clave Articulo</InputLabel>
+            <InputLabel >Clave Articulo</InputLabel>
           <FilledInput onKeyUp={() => handleKeyPress(event)}  id="ClaveArticulo" type='text'/>
       </FormControl>
-        {/* <FormControl fullWidth>
+      <hr />
+      <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Tipo Articulo</InputLabel>
-        <Select labelId="labelProveedor" id="selectTipoArtiuclo" label="Articulo" onChange={cambioSelectTipo}>
-            <MenuItem key={1} value='Ataud'>Ataud</MenuItem>
-            <MenuItem key={2} value='Urna'>Urna</MenuItem>
-            <MenuItem key={3} value='Relicario'>Relicario</MenuItem>
-        </Select>
+        <FilledInput id="tArticulo" value={tipo} readOnly type='text'/>
       </FormControl>
       <hr />
         <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Proveedor</InputLabel>
-        <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
-            {proveedores.map(({Nombre_Proveedor,ID_Proveedor,Clave_Proveedor}, idx) =>{
-                return(
-                <MenuItem data-clave={Clave_Proveedor} key={ID_Proveedor} value={ID_Proveedor}>{Nombre_Proveedor}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="proveedor" value={proveedores} readOnly type='text'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Plaza</InputLabel>
-        <Select labelId="labelProveedor" id="selectPlazas" label="Proveedor" onChange={cambioSelectPlazas}>
-            {plazas.map(({ID_Plaza,Plaza,Clave}, idx) =>{
-                return(
-                <MenuItem data-clave={Clave} key={ID_Plaza} value={ID_Plaza}>{Plaza}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="plaza" value={plazas} readOnly type='text'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Articulo Del Proveedor</InputLabel>
-        <Select labelId="labelArticuloProveedor" id="selectArticuloProveedor" label="Arituclo Del Proveedor" onChange={cambioSelectProveedoresArituclos}>
-            {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo }, idx) =>{
-                return(
-                <MenuItem key={ID_ArticuloXProveedor} value={ID_ArticuloXProveedor}>{Nombre_Articulo}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="artProveedor" value={artProveedores} readOnly type='text'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Materiales</InputLabel>
-        <Select labelId="labelMateriales" id="selectMateriales" label="Materiales" onChange={cambioSelectMateriales}>
-            {material.map(({ID_Material,Nombre_Material, Clave_Material}, idx) =>{
-                return(
-                <MenuItem key={ID_Material} value={ID_Material}>{Nombre_Material}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="materiales" value={material} readOnly type='text'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Colores</InputLabel>
-        <Select labelId="labelColores" id="selectColores" label="Colores" onChange={cambioSelectColores}>
-            {colores.map(({ID_Color,Nombre_Color, Clave_Color}, idx) =>{
-                return(
-                <MenuItem key={ID_Color} value={ID_Color}>{Nombre_Color}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="colores" value={colores} readOnly type='text'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Tonalidades</InputLabel>
-        <Select labelId="labelTonalidades" id="selectTonalidades" label="Tonalidades" onChange={cambioSelectTonalidade}>
-            {tonalidades.map(({ID_Tonalidad,Nombre_Tonalidad, Clave_Tonalidad}, idx) =>{
-                return(
-                <MenuItem key={ID_Tonalidad} value={ID_Tonalidad}>{Nombre_Tonalidad}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="tonalidades" value={tonalidades} readOnly type='text'/>
       </FormControl>
       <hr />
-      <div id="hideShowCeremonia">
-      <FormControl fullWidth >
+      {(ceremoniaNombre != '') ? <div> <FormControl fullWidth >
         <InputLabel id="demo-simple-select-label">Ceremonia</InputLabel>
-        <Select labelId="labelCeremonia" id="selectCeremonia" label="Ceremonia" onChange={cambioSelectCeremoniasAritculos}>
-            {ceremonias.map(({ID_Ceremonia,Portafolio}, idx) =>{
-                return(
-                <MenuItem key={ID_Ceremonia} value={ID_Ceremonia}>{Portafolio}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="ceremonia" value={ceremoniaNombre} readOnly type='text'/>
       </FormControl>
-      <hr />
-      </div>
-      <div id="hideShowNombreInterno">
+      <hr /></div> : ''}
+
+      {(ceremoniaNombre2 != '') ? <div>
       <FormControl fullWidth >
         <InputLabel id="demo-simple-select-label">Nombre Interno</InputLabel>
-        <Select labelId="labelNombreInterno" id="selectNombreInterno" label="Nombre Interno" onChange={cambioSelectArtCeremonia}>
-            {ceremoniaNombre.map(({ID_CeremoniasXArticulo,Nombre_Articulo}, idx) =>{
-                return(
-                <MenuItem key={ID_CeremoniasXArticulo} value={ID_CeremoniasXArticulo}>{Nombre_Articulo}</MenuItem>
-                );
-            })}
-          
-        </Select>
+        <FilledInput id="ceremoniaNombre" value={ceremoniaNombre2} readOnly type='text'/>
       </FormControl>
-      <hr />
-      </div> */}
+      <hr /> 
+      </div>: ''}
+
+     
+        
       
       </Box>
     </Box>

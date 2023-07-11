@@ -32,6 +32,7 @@ import { apiURL } from '../functiones'
 
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
+import { func } from 'prop-types';
 
 export const Movimientos = () => {
   const mOscuro = localStorage.oscuro
@@ -202,6 +203,53 @@ export const Movimientos = () => {
       obtenerQR(qrValor)
     }
   }
+
+  
+  const verTipoMovimiento = () =>{
+    // alert(document.getElementById("codigoQR").value)
+    Swal.fire({
+      allowOutsideClick: false,
+      title: `Movimientos`,
+      html: ``,
+      showConfirmButton: true,
+      confirmButtonText: 'Traspaso',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      showDenyButton: true,
+      denyButtonText: 'Cremación / Inhumación'
+    }).then((result) => {
+      if(result.isDismissed){
+        Swal.close()
+      }else if(result.isConfirmed){
+        alert('Holi')
+      }else{
+       
+           
+            let timerInterval
+        Swal.fire({
+          title: 'Cargando',
+          html: `<div className="spinner-border" role="status">
+          <span className="sr-only">Loading...</span>
+        </div>`,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading()
+            
+            timerInterval = setInterval(() => {
+             
+            }, 100)
+          },
+          willClose: () => {
+            clearInterval(timerInterval)
+          }
+        }).then((result) => {})
+            //Hacer Petición API
+          
+      }
+    })
+
+  }
   return (
     <ThemeProvider theme={darkTheme} >
     <CssBaseline />
@@ -237,6 +285,9 @@ export const Movimientos = () => {
       :
       ''
       }
+      <hr />
+      <Button disabled={(nombre == '') ? true : false} onClick={verTipoMovimiento} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Movimientos</b></Button>
+      <hr />
     <FormControl fullWidth>
         <FilledInput id="codigoQR" onKeyUp={() => handleKeyPress(event)}  placeholder='Codigo QR' type='text'/>
     </FormControl>
@@ -245,6 +296,11 @@ export const Movimientos = () => {
         <FilledInput value={nombre} readOnly placeholder='Nombre' type='text'/>
     </FormControl>
     <hr />
+    <FormControl fullWidth>
+        <FilledInput value={nombre} readOnly placeholder='Clave Articulo' type='text'/>
+    </FormControl>
+
+    {/* <hr />
     <FormControl fullWidth>
         <FilledInput value={tipo} readOnly placeholder='Tipo' type='text'/>
     </FormControl>
@@ -275,7 +331,7 @@ export const Movimientos = () => {
     <Button onClick={moverSucursal} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Mover a Sucursal</b></Button>
     </FormControl>
     </div>
-    : ''}
+    : ''} */}
   </Box>
 </Box>
     </ThemeProvider>

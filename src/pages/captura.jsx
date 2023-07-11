@@ -356,7 +356,7 @@ export const Captura = () => {
         </Select>
       </FormControl>
       <hr />
-        <FormControl fullWidth>
+      <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Proveedor</InputLabel>
         <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
             {proveedores.map(({Nombre_Proveedor,ID_Proveedor,Clave_Proveedor}, idx) =>{

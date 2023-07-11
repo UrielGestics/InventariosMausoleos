@@ -15,6 +15,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import FilledInput from '@mui/material/FilledInput';
 import Button from '@mui/material/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+
 
 //SweetAlert
 import Swal from 'sweetalert2';
@@ -36,28 +39,18 @@ export const Recepción = () => {
     const [obscuro, setobscuro] = useState()
     const [proveedores, setproveedores] = useState([])
     const [proveedoresNombre, setproveedoresNombre] = useState([])
-    const [plazas, setplazas] = useState([])
-    const [plazasNombre, setplazasNombre] = useState([])
     const [artProveedores, setartProveedores] = useState([])
     const [artProveedoresNombre, setartProveedoresNombre] = useState([])
-    const [artCeremoniasNombre, setartCeremoniasNombre] = useState([])
-    const [material, setmaterial] = useState([])
-    const [materialNombre, setmaterialNombre] = useState([])
-    const [colores, setcolores] = useState([])
-    const [ceremonias, setceremonias] = useState([])
-    const [coloresNombre, setcoloresNombre] = useState([])
-    const [tonalidades, settonalidades] = useState([])
-    const [tonalidadesNombre, settonalidadesNombre] = useState([])
-    const [ceremoniaNombre, setceremoniaNombre] = useState([])
-    const [ceremoniaNombre2, setceremoniaNombre2] = useState([])
-    const [arregloQR, setarregloQR] = useState([])
-    //setartCeremoniaNombre
-    const [artCeremoniaNombre, setartCeremoniaNombre] = useState([])
-    //const [claveProducto, setclaveProducto] = useState('')
+    const [claveArticulos, setclaveArticulos] = useState([])
+    const [plazas, setplazas] = useState([])
+    const [plazasNombre, setplazasNombre] = useState([])
     const [codQR, setcodQR] = useState('')
-    const [tipo, settipo] = useState('')
 
-    const nArt = ['Ceremonia'];
+    const defaultProps = {
+        options: claveArticulos,
+        getOptionLabel: (option) => option.Clave_Articulo,
+      };
+
 
     const darkTheme = createTheme({
         palette: {
@@ -84,6 +77,8 @@ export const Recepción = () => {
 
     useEffect(() => {
         validarNotLoggedPage()
+        obtenerProveedores()
+        obtenerPlazas()
     })
 
     const  validarNotLoggedPage = () => {
@@ -92,43 +87,149 @@ export const Recepción = () => {
         }
     }
 
-  
-    const imprimirQr = () =>{
-        var win = window.open('', '', 'height=700,width=700'); // Open the window. Its a popup window.
-            win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
-            win.document.close();
-            win.print();
-            win.addEventListener("afterprint", (event) => {
-                
-                setTimeout(() => {
-                  
-                    window.location.reload()
-                }, 1000);
-            })
-    }
+    const cambioSelectProveedores = (event) =>{
+      const proovedorID = event.target.value
+      setproveedoresNombre(event.target.value)
+      //setartProveedores
+      setartProveedores([])
+      fetch(`${apiURL}proveedores.php?tipo=obtenerArtProveedor&provedorID=${proovedorID}`)
+      .then(async(resp) =>{
+          const finalResp = await resp.json();
+          if(finalResp.estatus){
+              setartProveedores(finalResp[0])
+          }
+      })
+  }
 
-    const handleKeyPress = (event) => {
-        if(event.code === 'Enter'){
-          const valorCA = document.getElementById("ClaveArticulo").value
-          //TODO Api para obtener valor
-          fetch(`${apiURL}articulos.php?tipo=obtenerArtXCA&claveProducto=${valorCA}`)
-          .then(async(resp)=>{
-            const finalresp = await resp.json();
-            const {Tipo_Articulo,Nombre_Proveedor,Plaza,Nombre_Articulo,Nombre_Material,Nombre_Color,Nombre_Tonalidad,Portafolio,Nombre_ArticuloCeremonia} = finalresp[0][0]
-            settipo(Tipo_Articulo)
-            setproveedores(Nombre_Proveedor)
-            setplazas(Plaza)
-            setartProveedores(Nombre_Articulo)
-            setmaterial(Nombre_Material)
-            setcolores(Nombre_Color)
-            settonalidades(Nombre_Tonalidad)
-            setceremoniaNombre(Portafolio)
-            setceremoniaNombre2(Nombre_ArticuloCeremonia)
-          })
+  const obtenerProveedores = () =>{
+    fetch(`${apiURL}proveedores.php?tipo=obtenerTodosProveedoresActivos`)
+    .then(async(resp) =>{
+        const finalResp = await resp.json();
+        setproveedores(finalResp[0])
+    })
+} 
+
+const cambioSelectProveedoresArituclos = (event) =>{
+  setartProveedoresNombre(event.target.value)
+
+}
+
+const cambioSelectPlazas = (event) =>{
+  setplazasNombre(event.target.value)
+}
+const obtenerPlazas = () =>{
+  fetch(`${apiURL}plazas.php?tipo=obtenerTodasSucursalesPlazas`)
+  .then(async(resp) =>{
+      const finalResp = await resp.json();
+      setplazas(finalResp[0])
+  })
+}
+
+const generarCaptura = () =>{
+  if( proveedoresNombre == ''
+     || artProveedoresNombre == '' ){
+      Swal.fire(
+          'error',
+          'Tienes que llenar todos los campos',
+          'error'
+        )
+  }else{
+      let timerInterval
+      Swal.fire({
+        title: 'Cargando',
+        html: `<div className="spinner-border" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>`,
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading()
+          
+          timerInterval = setInterval(() => {
+           
+          }, 100)
+        },
+        willClose: () => {
+          clearInterval(timerInterval)
         }
-      }
+      }).then((result) => {})
+               
+               for(let i = 1; i<=document.getElementById('numberCantidad').value; i++){
+              let formData = new FormData();
+              formData.append('pro',proveedoresNombre);
+              formData.append('artProv',artProveedoresNombre);
+              formData.append('plaza',plazasNombre);
+              formData.append('cantidad',document.getElementById('numberCantidad').value);
+              formData.append('costo',document.getElementById('numberCosto').value);
+              formData.append('ordenCompra',document.getElementById('ordenCompra').value);
+              formData.append('usuario',localStorage.id);
+             
+              
+              formData.append('incrementa',i);
+              formData.append('tipo','guardarRecepcion');
 
-    
+              
+                  fetch(`${apiURL}articulos.php`,{
+                      method: 'post',
+                      body: formData
+                  })
+                  .then(async(resp) => {
+                      const {estatus,mensaje,QR} = await resp.json();
+                     
+                      if(estatus == true){
+                          if(i==document.getElementById('numberCantidad').value){
+                              Swal.close()
+                              Swal.fire(
+                                  'Exito',
+                                  mensaje,
+                                  'success'
+                                )
+                          }else{}
+                        
+                        
+                          setcodQR(codQR=>[...codQR,QR])
+
+                       
+
+                        
+                        //setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
+                      }else{
+                          Swal.close()
+                          console.log(estatus)
+                        Swal.fire(
+                          'Error',
+                          mensaje,
+                          'error'
+                        )
+                      }
+                    })
+                    .catch(err => {
+                      Swal.close()
+                      Swal.fire(
+                        'Error',
+                        'Hubo un error, por favor intentalo de nuevo 2'+err,
+                        'error'
+                      )
+                    })
+              }
+              
+  }
+}
+
+const imprimirQr = () =>{
+  var win = window.open('', '', 'height=700,width=700'); // Open the window. Its a popup window.
+      win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
+      win.document.close();
+      win.print();
+      win.addEventListener("afterprint", (event) => {
+          
+          setTimeout(() => {
+            
+              window.location.reload()
+          }, 1000);
+      })
+}
+
   return (
        <ThemeProvider theme={darkTheme} >
         <CssBaseline />
@@ -138,63 +239,72 @@ export const Recepción = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <Toolbar />
         <h3 style={{textAlign: 'center'}}>Recepción</h3>
-        <FormControl fullWidth>
-            <InputLabel >Clave Articulo</InputLabel>
-          <FilledInput onKeyUp={() => handleKeyPress(event)}  id="ClaveArticulo" type='text'/>
-      </FormControl>
+        
       <hr />
+      
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Tipo Articulo</InputLabel>
-        <FilledInput id="tArticulo" value={tipo} readOnly type='text'/>
-      </FormControl>
-      <hr />
-        <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Proveedor</InputLabel>
-        <FilledInput id="proveedor" value={proveedores} readOnly type='text'/>
-      </FormControl>
-      <hr />
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Plaza</InputLabel>
-        <FilledInput id="plaza" value={plazas} readOnly type='text'/>
+        <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
+            {proveedores.map(({Nombre_Proveedor,ID_Proveedor,Clave_Proveedor}, idx) =>{
+                return(
+                <MenuItem data-clave={Clave_Proveedor} key={ID_Proveedor} value={ID_Proveedor}>{Nombre_Proveedor}</MenuItem>
+                );
+            })}
+          
+        </Select>
       </FormControl>
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Articulo Del Proveedor</InputLabel>
-        <FilledInput id="artProveedor" value={artProveedores} readOnly type='text'/>
+        <Select labelId="labelArticuloProveedor" id="selectArticuloProveedor" label="Arituclo Del Proveedor" onChange={cambioSelectProveedoresArituclos}>
+            {artProveedores.map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo }, idx) =>{
+                return(
+                <MenuItem data-clave={Clave_Articulo} key={Clave_Articulo} value={ID_ArticuloXProveedor}>{Nombre_Articulo}</MenuItem>
+                );
+            })}
+          
+        </Select>
       </FormControl>
       <hr />
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Materiales</InputLabel>
-        <FilledInput id="materiales" value={material} readOnly type='text'/>
+        <InputLabel id="demo-simple-select-label">Plaza</InputLabel>
+        <Select labelId="labelProveedor" id="selectPlazas" label="Proveedor" onChange={cambioSelectPlazas}>
+            {plazas.map(({ID_Plaza,Plaza,Clave}, idx) =>{
+                return(
+                <MenuItem data-clave={Clave} key={ID_Plaza} value={ID_Plaza}>{Plaza}</MenuItem>
+                );
+            })}
+          
+        </Select>
       </FormControl>
       <hr />
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Colores</InputLabel>
-        <FilledInput id="colores" value={colores} readOnly type='text'/>
+      <InputLabel >Cantidad</InputLabel>
+          <FilledInput id="numberCantidad" type='number'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Tonalidades</InputLabel>
-        <FilledInput id="tonalidades" value={tonalidades} readOnly type='text'/>
+      <InputLabel >Precio</InputLabel>
+          <FilledInput id="numberCosto" type='number'/>
       </FormControl>
       <hr />
-      {(ceremoniaNombre != '') ? <div> <FormControl fullWidth >
-        <InputLabel id="demo-simple-select-label">Ceremonia</InputLabel>
-        <FilledInput id="ceremonia" value={ceremoniaNombre} readOnly type='text'/>
+      <FormControl fullWidth>
+      <InputLabel >Orden De Compra</InputLabel>
+          <FilledInput id="ordenCompra" type='text'/>
       </FormControl>
-      <hr /></div> : ''}
-
-      {(ceremoniaNombre2 != '') ? <div>
-      <FormControl fullWidth >
-        <InputLabel id="demo-simple-select-label">Nombre Interno</InputLabel>
-        <FilledInput id="ceremoniaNombre" value={ceremoniaNombre2} readOnly type='text'/>
-      </FormControl>
-      <hr /> 
-      </div>: ''}
-
+      <hr />
+      <div id='QRS'>
+      {(codQR.length == 0) ?'' :
+      codQR.map(qr =>{
+        return(<QRious class="mainImg" value={qr} size={250} style={{marginLeft: '50px', marginTop:'30px'}}  foreground='black' level='H'  />)
+      })
+      }
+</div>
+      {(codQR.length == 0) ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
+      : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}
      
-        
-      
+
+      {/* <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> */}
       </Box>
     </Box>
         </ThemeProvider>

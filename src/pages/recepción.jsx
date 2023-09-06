@@ -45,6 +45,10 @@ export const Recepción = () => {
     const [plazas, setplazas] = useState([])
     const [plazasNombre, setplazasNombre] = useState([])
     const [codQR, setcodQR] = useState('')
+    const [precio, setprecio] = useState('')
+    const [sucursales, setsucursales] = useState([])
+    const [sucursalID, setsucursalID] = useState('')
+    const [qRTexto, setQRTexto] = useState('')
 
     const defaultProps = {
         options: claveArticulos,
@@ -66,7 +70,7 @@ export const Recepción = () => {
         }else{
             localStorage.oscuro = 'false'
             setobscuro('light')
-        } 
+        }
     }
     useEffect(() => {
         validarModoOscuro()
@@ -107,15 +111,29 @@ export const Recepción = () => {
         const finalResp = await resp.json();
         setproveedores(finalResp[0])
     })
-} 
+}
 
 const cambioSelectProveedoresArituclos = (event) =>{
   setartProveedoresNombre(event.target.value)
+  fetch(`${apiURL}proveedores.php?tipo=buscarDatosArtProveedor&nombre=${event.target.value}`)
+  .then(async(resp) =>{
+    const finalresp = await resp.json();
+    setprecio(finalresp[0][0].Precio)
+  })
 
+}
+
+const cambioSelectSucursales = (event) =>{
+setsucursalID(event.target.value)
 }
 
 const cambioSelectPlazas = (event) =>{
   setplazasNombre(event.target.value)
+  fetch(`${apiURL}plazas.php?tipo=obtenerSucursalesPlazas&ID_Plaza=${event.target.value}`)
+  .then(async(resp) =>{
+    const finalresp = await resp.json();
+    setsucursales(finalresp[0])
+  })
 }
 const obtenerPlazas = () =>{
   fetch(`${apiURL}plazas.php?tipo=obtenerTodasSucursalesPlazas`)
@@ -144,16 +162,16 @@ const generarCaptura = () =>{
         timerProgressBar: true,
         didOpen: () => {
           Swal.showLoading()
-          
+
           timerInterval = setInterval(() => {
-           
+
           }, 100)
         },
         willClose: () => {
           clearInterval(timerInterval)
         }
       }).then((result) => {})
-               
+
                for(let i = 1; i<=document.getElementById('numberCantidad').value; i++){
               let formData = new FormData();
               formData.append('pro',proveedoresNombre);
@@ -163,19 +181,20 @@ const generarCaptura = () =>{
               formData.append('costo',document.getElementById('numberCosto').value);
               formData.append('ordenCompra',document.getElementById('ordenCompra').value);
               formData.append('usuario',localStorage.id);
-             
-              
+              formData.append("sucursalID",sucursalID)
+
+
               formData.append('incrementa',i);
               formData.append('tipo','guardarRecepcion');
 
-              
+
                   fetch(`${apiURL}articulos.php`,{
                       method: 'post',
                       body: formData
                   })
                   .then(async(resp) => {
                       const {estatus,mensaje,QR} = await resp.json();
-                     
+setQRTexto(QR)
                       if(estatus == true){
                           if(i==document.getElementById('numberCantidad').value){
                               Swal.close()
@@ -185,13 +204,13 @@ const generarCaptura = () =>{
                                   'success'
                                 )
                           }else{}
-                        
-                        
+
+
                           setcodQR(codQR=>[...codQR,QR])
 
-                       
 
-                        
+
+
                         //setcodQR(proveedor[0].Clave_Proveedor + '-' + artProveedor[0].Clave_Articulo+'-'+materiales[0].Clave_Material+'-'+color[0].Clave_Color+tona[0].Clave_Tonalidad)
                       }else{
                           Swal.close()
@@ -212,7 +231,7 @@ const generarCaptura = () =>{
                       )
                     })
               }
-              
+
   }
 }
 
@@ -222,9 +241,9 @@ const imprimirQr = () =>{
       win.document.close();
       win.print();
       win.addEventListener("afterprint", (event) => {
-          
+
           setTimeout(() => {
-            
+
               window.location.reload()
           }, 1000);
       })
@@ -239,9 +258,9 @@ const imprimirQr = () =>{
       <Box component="main" sx={{ flexGrow: 1, p: 1 }}>
         <Toolbar />
         <h3 style={{textAlign: 'center'}}>Recepción</h3>
-        
+
       <hr />
-      
+
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Proveedor</InputLabel>
         <Select labelId="labelProveedor" id="selectProveedor" label="Proveedor" onChange={cambioSelectProveedores}>
@@ -250,7 +269,7 @@ const imprimirQr = () =>{
                 <MenuItem data-clave={Clave_Proveedor} key={ID_Proveedor} value={ID_Proveedor}>{Nombre_Proveedor}</MenuItem>
                 );
             })}
-          
+
         </Select>
       </FormControl>
       <hr />
@@ -262,9 +281,10 @@ const imprimirQr = () =>{
                 <MenuItem data-clave={Clave_Articulo} key={Clave_Articulo} value={ID_ArticuloXProveedor}>{Nombre_Articulo}</MenuItem>
                 );
             })}
-          
+
         </Select>
       </FormControl>
+      
       <hr />
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Plaza</InputLabel>
@@ -274,7 +294,19 @@ const imprimirQr = () =>{
                 <MenuItem data-clave={Clave} key={ID_Plaza} value={ID_Plaza}>{Plaza}</MenuItem>
                 );
             })}
-          
+
+        </Select>
+      </FormControl>
+      <hr />
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Sucursales</InputLabel>
+        <Select labelId="labelProveedor" id="selectSucursales" label="Proveedor" onChange={cambioSelectSucursales}>
+            {sucursales.map(({ID_Sucursal,Nombre_Sucursal,Clave_Sucursal}, idx) =>{
+                return(
+                <MenuItem data-clave={Clave_Sucursal} key={ID_Sucursal} value={ID_Sucursal}>{Nombre_Sucursal}</MenuItem>
+                );
+            })}
+
         </Select>
       </FormControl>
       <hr />
@@ -284,25 +316,38 @@ const imprimirQr = () =>{
       </FormControl>
       <hr />
       <FormControl fullWidth>
-      <InputLabel >Precio</InputLabel>
-          <FilledInput id="numberCosto" type='number'/>
+      <InputLabel >Orden De Compra</InputLabel>
+          <FilledInput id="ordenCompra" type='text'/>
       </FormControl>
       <hr />
       <FormControl fullWidth>
-      <InputLabel >Orden De Compra</InputLabel>
-          <FilledInput id="ordenCompra" type='text'/>
+      <InputLabel >Precio</InputLabel>
+          <FilledInput id="numberCosto" value={precio} disabled type='number'/>
       </FormControl>
       <hr />
       <div id='QRS'>
       {(codQR.length == 0) ?'' :
       codQR.map(qr =>{
-        return(<QRious class="mainImg" value={qr} size={250} style={{marginLeft: '50px', marginTop:'30px'}}  foreground='black' level='H'  />)
+        return(
+        <div style={{marginLeft: '50px'}}>
+          <QRious class="mainImg" value={qr} size={250}  foreground='black' level='H'  />
+          <hr />
+          <p>{qRTexto.substr(7,2)}/{qRTexto.substr(5,2)}/{qRTexto.substr(1,4)}  {qRTexto.substr(9,2)}:{qRTexto.substr(11,2)}:{qRTexto.substr(13,2)}</p>
+        <p>{document.getElementById("selectArticuloProveedor").textContent}</p>
+        <p>{document.getElementById('ordenCompra').value}</p>
+        <p>${precio}</p>
+        <p>{document.getElementById("selectProveedor").textContent}</p>
+        <p>{document.getElementById("selectPlazas").textContent} - {document.getElementById("selectSucursales").textContent}</p>
+        <hr />
+        </div>
+        
+        )
       })
       }
 </div>
-      {(codQR.length == 0) ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
+      {(codQR.length == 0) ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button>
       : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}
-     
+
 
       {/* <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> */}
       </Box>

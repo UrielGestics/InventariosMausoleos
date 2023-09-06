@@ -18,6 +18,8 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import FilledInput from '@mui/material/FilledInput';
 import Button from '@mui/material/Button';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
 //SweetAlert
 import Swal from 'sweetalert2';
@@ -41,15 +43,16 @@ export const Movimientos = () => {
     const [obscuro, setobscuro] = useState()
     const [camOpen, setCamOpen] = useState(false);
     const [nombre, setNombre] = useState('');
-    const [tipo, setTipo] = useState('');
-    const [color, setColor] = useState('');
-    const [material, setMaterial] = useState('');
-    const [ceremonia, setCeremonia] = useState('');
-    const [artCeremonia, setArtCeremonia] = useState('');
-    const [estatus, setEstatus] = useState('');
-    const [plaza, setplaza] = useState('')
+    const [claveArticulo, setclaveArticulo] = useState('')
     const [idArticulo, setidArticulo] = useState('')
     const [selectPlaza, setselectPlaza] = useState('')
+    const [plazas, setplazas] = useState('')
+    const [estatus, setestatus] = useState('')
+    const [idArticulos, setidArticulos] = useState('')
+    const [sucursal, setsucursal] = useState('')
+    const [totalCremaciones, settotalCremaciones] = useState('')
+    const [idSucursal, setidSucursal] = useState('')
+    const [movimientos, setMovimientos] = useState([''])
 
 
     const darkTheme = createTheme({
@@ -71,6 +74,7 @@ export const Movimientos = () => {
     useEffect(() => {
         validarModoOscuro()
         validarNotLoggedPage()
+        obtenerPlazas()
         //obtenerQR("120230612104115GAM-MAG-MAD-NGCO")
     }, [])
     
@@ -78,6 +82,20 @@ export const Movimientos = () => {
       if (localStorage.logged == undefined) {
           navigate('/login')
       }
+  }
+  const obtenerPlazas = () =>{
+    fetch(`${apiURL}plazas.php?tipo=obtenerTodasSucursalesPlazas`)
+    .then(async(resp) =>{
+        const finalResp = await resp.json();
+        // setplazas(finalResp[0])
+        let selectopt = '<select id="seelectDataPlazas" class="form-select">'
+        finalResp[0].map(({ID_Plaza,Plaza}) =>{
+          selectopt+=`<option value='${ID_Plaza}'>${Plaza}</option>`
+        })
+        selectopt+=`</select>`
+
+        setplazas(selectopt)
+    })
   }
 
   const leerQR = ()=>{
@@ -88,18 +106,35 @@ export const Movimientos = () => {
     fetch(`${apiURL}articulos.php?tipo=obtenerArticuloQR&codQR=${codQRResult}`)
     .then(async(resp) => {
       const finalResp = await resp.json()
+      
+
+      
       if(finalResp.estatus){
         setCamOpen(false)
+        console.log(finalResp)
         document.getElementById("codigoQR").value = codQRResult
-        setNombre(finalResp[0][0].Clave_Articulo)
+        setNombre(finalResp[0][0].Nombre_Articulo)
+        setclaveArticulo(finalResp[0][0].Clave_Articulo)
         obtenerSucursalPlaza(finalResp[0][0].ID_Plaza)
-        setTipo(finalResp[0][0].Tipo_Articulo)
-        setColor(finalResp[0][0].Nombre_Color)
-        setMaterial(finalResp[0][0].Nombre_Material)
-        setEstatus(finalResp[0][0].Estatus)
-        setCeremonia(finalResp[0][0].Portafolio)
-        setArtCeremonia(finalResp[0][0].Nombre_Articulo)
-        setidArticulo(finalResp[0][0].ID_Articulo)
+        setestatus(finalResp[0][0].estatusArt)
+        setidArticulos(finalResp[0][0].ID_Articulo)
+        obtenerMovimientosart(finalResp[0][0].ID_Articulo)
+        
+        fetch(`${apiURL}articulos.php?tipo=obtenerPlazaArt&ID_Articulo=${finalResp[0][0].ID_Articulo}`)
+        .then(async(resp) =>{
+          const finalresp = await resp.json();
+          setsucursal(finalresp[0][0].Nombre_Sucursal)
+          setidSucursal(finalresp[0][0].ID_Sucursal)
+        })
+
+        fetch(`${apiURL}articulos.php?tipo=obtenerCremacionesArt&ID_Articulo=${finalResp[0][0].ID_Articulo}`)
+        .then(async(resp) =>{
+          const finalresp = await resp.json();
+          settotalCremaciones(finalresp.totalCremaciones)
+          console.log(finalresp.totalCremaciones)
+          
+        })
+
       }else{
 
       }
@@ -107,17 +142,20 @@ export const Movimientos = () => {
   }
 
   const obtenerSucursalPlaza = (plaza2)=>{
-    fetch(`${apiURL}plazas.php?tipo=obtenerSucursalesPlazas&ID_Plaza=${plaza2}`)
+
+    fetch(`${apiURL}plazas.php?tipo=obtenerSucursalesPlazas`)
     .then(async(resp) => {
       const finalResp = await resp.json()
       if(finalResp.estatus){
-        setplaza(finalResp[0])
+        //setplaza(finalResp[0])
         //setselectPlaza(JSON.stringify(finalResp[0][0]))
-        let option  = '';
+        let option  = '<select id="seelectDataPlazas" class="form-select">';
         finalResp[0].map(({ID_Sucursal,Nombre_Sucursal}) =>{
           option += `<option value='${ID_Sucursal}'>${Nombre_Sucursal}</option>`
           
         })
+        option += '</select>'
+        console.log(option)
         setselectPlaza(option)
         
       }else{}
@@ -212,43 +250,222 @@ export const Movimientos = () => {
       title: `Movimientos`,
       html: ``,
       showConfirmButton: true,
-      confirmButtonText: 'Traspaso',
+      confirmButtonText: (estatus =='Cremación') ? 'Reingreso' :  'Traspaso',
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
-      showDenyButton: true,
-      denyButtonText: 'Cremación / Inhumación'
+      showDenyButton: (estatus.includes('Alta') || estatus.includes('Cremación')) ? false : true,
+      denyButtonText: 'Cremación / Inhumación',
     }).then((result) => {
+      console.log(result)
       if(result.isDismissed){
         Swal.close()
       }else if(result.isConfirmed){
-        alert('Holi')
-      }else{
-       
-           
-            let timerInterval
+        if(estatus == 'Cremación'){
+          let timerInterval
+          Swal.fire({
+            title: 'Cargando',
+            html: `<div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>`,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading()
+              
+              timerInterval = setInterval(() => {
+               
+              }, 5000)
+            },
+            willClose: () => {
+              clearInterval(timerInterval)
+            }
+          }).then((result) => {})
+
+          let formDataInventario = new FormData();
+          formDataInventario.append("tipo","actualizarEstausArticuloInventario")
+          formDataInventario.append("ID_Articulo",idArticulos)
+          fetch(`${apiURL}articulos.php`,{
+              method: 'post',
+              body: formDataInventario
+          })
+          .then(async(resp) =>{
+            const {mensaje} = await resp.json()
+            console.log(mensaje)
+            Swal.close()
+            Swal.fire('Accion Completada', mensaje, 'success').then(resp =>{location.reload();})
+          })
+        }else{
         Swal.fire({
-          title: 'Cargando',
-          html: `<div className="spinner-border" role="status">
-          <span className="sr-only">Loading...</span>
-        </div>`,
-          timer: 2000,
-          timerProgressBar: true,
-          didOpen: () => {
-            Swal.showLoading()
-            
-            timerInterval = setInterval(() => {
+          allowOutsideClick: false,
+      title: `Traspaso`,
+      html: `${selectPlaza}`,
+      showConfirmButton: true,
+      confirmButtonText: 'Confirmar',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      showDenyButton: false,
+        }).then((result) => {
+          if(result.isDismissed){
+            Swal.close()
+          }else if(result.isConfirmed){
+            const palzaDestino = document.getElementById("seelectDataPlazas").value
+            let timerInterval
+            Swal.fire({
+              title: 'Cargando',
+              html: `<div className="spinner-border" role="status">
+              <span className="sr-only">Loading...</span>
+            </div>`,
+              timer: 2000,
+              timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading()
+                
+                timerInterval = setInterval(() => {
+                 
+                }, 5000)
+              },
+              willClose: () => {
+                clearInterval(timerInterval)
+              }
+            }).then((result) => {})
+           
+            //idArticulos
+            let formData = new FormData();
+            formData.append("ID_Usuario",localStorage.id)
+            formData.append("ID_Articulo",idArticulos) 
+            formData.append("ID_Sucursal",palzaDestino) 
+            formData.append("Motivo","Traspaso")
+            formData.append("tipo","moveraSucursal") 
+
+            fetch(`${apiURL}movimientos.php`,{
+              method: 'post',
+              body: formData
+            }).then(async(resp) =>{
+
              
-            }, 100)
-          },
-          willClose: () => {
-            clearInterval(timerInterval)
+              const {estatus,mensaje} = await resp.json()
+
+              if(estatus == true){
+                Swal.close();
+                Swal.fire('Accion Completada', mensaje, 'success').then(resp =>{location.reload();})
+
+               
+                
+                //api para actualziar estatus
+              }else{
+                //mensaje error
+                Swal.close();
+                Swal.fire('Accion Incorrecta', 'Hubo un error al actualizar los datos', 'error').then(resp =>{})
+              }
+            })
           }
-        }).then((result) => {})
+        })
+      }
+      }else{
             //Hacer Petición API
+            Swal.fire({
+              allowOutsideClick: false,
+          title: `Cremación/Inhumación`,
+          html: `<div>
+          <input type='text' class='form-control' id='nPropuesta' placeholder='Numero de propuesta'>
+          <hr>
+          <input type='text' class='form-control' id='Persona_Fallecida' placeholder='Nombre de la persona fallecida'>
+          <hr>
+          <select class='form-select' id='Redimido'>
+          <option value='Redimido'>Redimido</option>
+          <option value='Inmediato'>Inmediato</option>
+          </select>
+          <hr>
+          <select id='selectCremacionInhumacion' class='form-select'>
+          <option value='Cremación'>Cremación</option>
+          <option value='Inhumación'>Inhumación</option>
+          </select>
+          <hr>
+          <input type='text' class='form-control' value='${totalCremaciones}' placeholder='Numero de cremaciones' readonly>
+          <hr>
+          <input type='text' class='form-control' value='${sucursal}' placeholder='Sucursal' readonly>
+          </div>`,
+          showConfirmButton: true,
+          confirmButtonText: 'Confirmar',
+          showCancelButton: true,
+          cancelButtonText: 'Cancelar',
+          showDenyButton: false,
+            }).then(result =>{
+             if(result.isConfirmed){
+              let formDataCremacionInhumacion = new FormData();
+              formDataCremacionInhumacion.append("tipo","guardarMovimientoCremacionInhumacion")
+              formDataCremacionInhumacion.append("ID_Usuario",localStorage.id)
+              formDataCremacionInhumacion.append("ID_Articulo",idArticulos)
+              formDataCremacionInhumacion.append("Tipos",document.getElementById("selectCremacionInhumacion").value)
+              formDataCremacionInhumacion.append("ID_Sucursal",idSucursal)
+              formDataCremacionInhumacion.append("Numero_Propuesta", document.getElementById("nPropuesta").value)
+              formDataCremacionInhumacion.append("Persona_Fallecida", document.getElementById("Persona_Fallecida").value)
+              formDataCremacionInhumacion.append("Redimido", document.getElementById("Redimido").value)
+
+              fetch(`${apiURL}articulos.php`,{
+                method: 'post',
+                body: formDataCremacionInhumacion
+            })
+            .then(async(resp) =>{
+              const {mensaje} = await resp.json()
+              Swal.fire('Accion Completada', mensaje, 'success').then(resp =>{location.reload();})
+            })
+             }
+            })
           
       }
     })
 
+  }
+
+  const recibirArticulo = () =>{
+    let timerInterval
+          Swal.fire({
+            title: 'Cargando',
+            html: `<div className="spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>`,
+            timer: 2000,
+            timerProgressBar: true,
+            didOpen: () => {
+              Swal.showLoading()
+              
+              timerInterval = setInterval(() => {
+               
+              }, 5000)
+            },
+            willClose: () => {
+              clearInterval(timerInterval)
+            }
+          }).then((result) => {})
+
+          let formDataInventario = new FormData();
+          formDataInventario.append("tipo","actualizarEstausArticuloInventario")
+          formDataInventario.append("ID_Articulo",idArticulos)
+          fetch(`${apiURL}articulos.php`,{
+              method: 'post',
+              body: formDataInventario
+          })
+          .then(async(resp) =>{
+            const {mensaje} = await resp.json()
+            console.log(mensaje)
+            Swal.close()
+            Swal.fire('Accion Completada', mensaje, 'success').then(resp =>{location.reload();})
+          })
+
+  }
+
+  const obtenerMovimientosart = (art)=>{
+     fetch(`${apiURL}articulos.php?tipo=obtenerHistorialMovimientos&ID_Articulo=${art}`)
+     .then(async(resp)=>{
+      const finalResp = await resp.json()
+      console.log(finalResp)
+      if(finalResp.estatus == true){
+        setMovimientos(finalResp[0])
+      }
+      
+     })
+    //setidArticulos
   }
   return (
     <ThemeProvider theme={darkTheme} >
@@ -286,7 +503,7 @@ export const Movimientos = () => {
       ''
       }
       <hr />
-      <Button disabled={(nombre == '') ? true : false} onClick={verTipoMovimiento} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Movimientos</b></Button>
+      <Button disabled={(nombre == ''  || estatus == 'En Transito' || estatus == 'Inhumación') ? true : false} onClick={verTipoMovimiento} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Movimientos</b></Button>
       <hr />
     <FormControl fullWidth>
         <FilledInput id="codigoQR" onKeyUp={() => handleKeyPress(event)}  placeholder='Codigo QR' type='text'/>
@@ -297,10 +514,16 @@ export const Movimientos = () => {
     </FormControl>
     <hr />
     <FormControl fullWidth>
-        <FilledInput value={nombre} readOnly placeholder='Clave Articulo' type='text'/>
+        <FilledInput value={claveArticulo} readOnly placeholder='Clave Articulo' type='text'/>
     </FormControl>
 
-    {/* <hr />
+    <hr />
+    <FormControl fullWidth>
+        <FilledInput value={estatus} readOnly placeholder='Estatus' type='text'/>
+    </FormControl>
+    <hr />
+    { (estatus == 'En Transito') ?  <Button onClick={recibirArticulo} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Recibir</b></Button>: ''}
+     {/* <hr />
     <FormControl fullWidth>
         <FilledInput value={tipo} readOnly placeholder='Tipo' type='text'/>
     </FormControl>
@@ -332,6 +555,17 @@ export const Movimientos = () => {
     </FormControl>
     </div>
     : ''} */}
+
+     {(movimientos) ? (movimientos.length > 0) ? <h3 className="text-center">Historial De Movimientos</h3> : '' : ''}
+     
+     <List style={{ border: '3px solid white', borderRadius: '10px' } }>
+     {(movimientos.length > 0) ?
+     movimientos.map(mov =>{
+      return(<ListItem key={mov.Fecha_Movimiento}><p className="text-center">{mov.Tipo} - {mov.Fecha_Movimiento} - {mov.Nombre}</p></ListItem>)
+     })
+     : ''}
+    </List>
+
   </Box>
 </Box>
     </ThemeProvider>

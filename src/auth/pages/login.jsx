@@ -96,6 +96,17 @@ const iniciarSesion = () =>{
         )
       }else{
         localStorage.id = finalResp[0][0].ID;
+        localStorage.tipo = finalResp[0][0].Tipo;
+        localStorage.PAdministrador = finalResp[0][0].PAdministrador;
+        localStorage.PTodasPlazas = finalResp[0][0].PTodasPlazas;
+        localStorage.PTodasSucursales = finalResp[0][0].PTodasSucursales;
+        localStorage.PReportes = finalResp[0][0].PReportes;
+        localStorage.PInvetarioPlaza = finalResp[0][0].PInvetarioPlaza;
+        localStorage.PCaptura = finalResp[0][0].PCaptura;
+        localStorage.PRecepcion = finalResp[0][0].PRecepcion;
+        localStorage.PConsulta = finalResp[0][0].PConsulta;
+        localStorage.PMovimientos = finalResp[0][0].PMovimientos;
+        localStorage.PCatalogos = finalResp[0][0].PCatalogos;
         localStorage.logged = true;
         navigate('/inicio')
       }

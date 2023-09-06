@@ -122,14 +122,11 @@ export const Consulta = () => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">ID Articulo</TableCell>
-            <TableCell align="center">Nombre Del Articulo</TableCell>
-            <TableCell align="center">Tipo De Articulo</TableCell>
             <TableCell align="center">Clave De Articulo</TableCell>
+            <TableCell align="center">Nombre Del Articulo</TableCell>
+            <TableCell align="center">Estatus</TableCell>
             <TableCell align="center">Plaza</TableCell>
-            <TableCell align="center">Color</TableCell>
-            <TableCell align="center">Material</TableCell>
-            <TableCell align="center">Tonalidad</TableCell>
+            <TableCell align="center">Sucursal</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -137,21 +134,17 @@ export const Consulta = () => {
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={8}> <Skeleton /></TableCell>
             </TableRow>
-          :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({ID_Articulo,Portafolio,Tipo_Articulo,Clave_Articulo,Plaza,
-            Nombre_Color,Nombre_Material,Nombre_Tonalidad}) =>(
+          :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({Estatus,Clave_Articulo,Nombre_Articulo,Plaza,Nombre_Sucursal}) =>(
             <TableRow
-              key={ID_Articulo}
+              key={Clave_Articulo}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               
-              <TableCell align="center">{ID_Articulo}</TableCell>
-              <TableCell align="center">{Portafolio}</TableCell>
-              <TableCell align="center">{Tipo_Articulo}</TableCell>
               <TableCell align="center">{Clave_Articulo}</TableCell>
+              <TableCell align="center">{Nombre_Articulo}</TableCell>
+              <TableCell align="center">{Estatus}</TableCell>
               <TableCell align="center">{Plaza}</TableCell>
-              <TableCell align="center">{Nombre_Color}</TableCell>
-              <TableCell align="center">{Nombre_Material}</TableCell>
-              <TableCell align="center">{Nombre_Tonalidad}</TableCell>
+              <TableCell align="center">{Nombre_Sucursal}</TableCell>
               
             </TableRow>
           )) : 

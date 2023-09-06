@@ -31,7 +31,7 @@ import Swal from 'sweetalert2';
 
 
 //Funciones Propias
-import { apiURL } from '../functiones'
+import { apiURL, monedaMX } from '../functiones'
 
 //Mis Componenetes
 import { BarraSuperior }  from '../components/barraSuperios';
@@ -119,7 +119,12 @@ export const ProductosProveedor = () => {
             <br />
             <label>Clave Del Articulo</label>
             <br />
-            <input type="text" id="cArtPro" class="swal2-input" placeholder="Clave Del Articulo">`,
+            <input type="text" id="cArtPro" class="swal2-input" placeholder="Clave Del Articulo">
+            <br />
+            <label>Precio</label>
+            <br />
+            <input type="number" id="cPrecioPro" class="swal2-input" placeholder="Precio">
+            `,
             confirmButtonText: 'Agregar',
             showCancelButton: true,
             cancelButtonText: 'Cancelar'
@@ -129,7 +134,8 @@ export const ProductosProveedor = () => {
             }else{
                 const nArtPro = Swal.getPopup().querySelector('#nArtPro').value
                 const cArtPro = Swal.getPopup().querySelector('#cArtPro').value
-                if (!nArtPro || !cArtPro) {
+                const cPrecioPro = Swal.getPopup().querySelector('#cPrecioPro').value
+                if (!nArtPro || !cArtPro || !cPrecioPro) {
                   Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
                 }else{
                     let timerInterval
@@ -156,6 +162,7 @@ export const ProductosProveedor = () => {
                   formData.append("tipo","agregarArtProveedor")
                   formData.append("nArtPro",nArtPro)
                   formData.append("cArtPro",cArtPro)
+                  formData.append("cPrecioPro",cPrecioPro)
                   formData.append("id",id)
     
                   fetch(`${apiURL}proveedores.php`,{
@@ -230,7 +237,7 @@ export const ProductosProveedor = () => {
           })
     }
 
-    const editarArtProveedor = (ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo) =>{
+    const editarArtProveedor = (ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo,Precio) =>{
         Swal.fire({
             allowOutsideClick: false,
             title: `Modificar Articulo ${Nombre_Articulo}`,
@@ -240,7 +247,12 @@ export const ProductosProveedor = () => {
             <br />
             <label>Clave Del Articulo</label>
             <br />
-            <input type="text" id="cArtPro" class="swal2-input" value='${Clave_Articulo}' placeholder="Clave Del Proveedor">`,
+            <input type="text" id="cArtPro" class="swal2-input" value='${Clave_Articulo}' placeholder="Clave Del Proveedor">
+            <br />
+            <label>Precio</label>
+            <br />
+            <input type="number" id="cPrecioPro" class="swal2-input" value='${Precio}' placeholder="Precio">
+            `,
             confirmButtonText: 'Editar',
             showCancelButton: true,
             cancelButtonText: 'Cancelar'
@@ -251,7 +263,8 @@ export const ProductosProveedor = () => {
               
                 const nArtPro = Swal.getPopup().querySelector('#nArtPro').value
                 const cArtPro = Swal.getPopup().querySelector('#cArtPro').value
-                if (!nArtPro || !cArtPro) {
+                const cPrecioPro = Swal.getPopup().querySelector("#cPrecioPro").value
+                if (!nArtPro || !cArtPro || !cPrecioPro) {
                   Swal.showValidationMessage(`Porfavor llena Ambos Campos`)
                 }else{
                   let timerInterval
@@ -279,6 +292,7 @@ export const ProductosProveedor = () => {
                   formData.append("id",ID_ArticuloXProveedor)
                   formData.append("nArtPro",nArtPro)
                   formData.append("cArtPro",cArtPro)
+                  formData.append("cPrecioPro",cPrecioPro)
   
                   fetch(`${apiURL}proveedores.php`,{
                       method:'POST',
@@ -319,6 +333,7 @@ export const ProductosProveedor = () => {
           <TableRow>
             <TableCell align="center">Nombre Del Articulo</TableCell>
             <TableCell align="center">Clave Del Articulo</TableCell>
+            <TableCell align="center">Precio</TableCell>
             <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
@@ -327,7 +342,7 @@ export const ProductosProveedor = () => {
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={3}> <Skeleton /></TableCell>
             </TableRow>
-          :(articulosproveedores!=undefined) ? articulosproveedores.slice(pg * rpg, pg * rpg + rpg).map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo}) =>(
+          :(articulosproveedores!=undefined) ? articulosproveedores.slice(pg * rpg, pg * rpg + rpg).map(({ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo,Precio}) =>(
             <TableRow
               key={ID_ArticuloXProveedor}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -335,8 +350,9 @@ export const ProductosProveedor = () => {
               
               <TableCell align="center">{Nombre_Articulo}</TableCell>
               <TableCell align="center">{Clave_Articulo}</TableCell>
+              <TableCell align="center">{monedaMX.format(Precio)}</TableCell>
               <TableCell align="center">
-              <Button  onClick={() => editarArtProveedor(ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo)} title='Editar' key={`a${ID_ArticuloXProveedor}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
+              <Button  onClick={() => editarArtProveedor(ID_ArticuloXProveedor,Nombre_Articulo,Clave_Articulo, Precio)} title='Editar' key={`a${ID_ArticuloXProveedor}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
               <Button onClick={() => desHabilitarArtProveedor(ID_ArticuloXProveedor,Nombre_Articulo)}  title='Baja' key={`b${ID_ArticuloXProveedor}`} variant="contained" color='error' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-trash"></i></Button>
              
               </TableCell>

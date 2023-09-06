@@ -21,6 +21,9 @@ import { Consulta } from "../pages/consulta"
 import { Movimientos } from "../pages/movimientos"
 import { InventarioPlaza } from "../pages/inventarioPlaza"
 import { Recepción } from "../pages/recepción"
+import { Usuarios } from "../pages/usuarios"
+import { DatosUsuarios } from "../pages/datosUsuarios"
+import { AgregarUsuario } from "../pages/agregarUsuario"
 
 
 
@@ -33,12 +36,14 @@ export const AppRouter = () => {
       <Route  path="inicio" element = {<Home />}></Route>
       <Route  path="Inventarios" element = {<Invetarios />}></Route>
       <Route  path="Plazas" element = {<Plazas />}></Route>
+      <Route  path="Usuarios" element = {<Usuarios />}></Route>
       <Route  path="Reportes" element = {<Reportes />}></Route>
       <Route  path="Perfil" element = {<Perfil />}></Route>
       <Route  path="Captura" element = {<Captura />}></Route>
       <Route  path="Recepción" element = {<Recepción />}></Route>
       <Route  path="Consulta" element = {<Consulta />}></Route>
       <Route path="Proveedores" element = {<Proveedores />}></Route>
+      <Route path="usuariosDatos/:id" element = {<DatosUsuarios />}></Route>
       <Route path="productosProveedor/:id/:nombre" element = {<ProductosProveedor />}></Route>
       <Route path="productosProveedorDeshabilitados/:id/:nombre" element = {<ProductosProveedorDeshabilitados />}></Route>
       <Route path="productosCeremonia/:id/:nombre" element = {<ProductosCeremonia />}></Route>
@@ -50,6 +55,7 @@ export const AppRouter = () => {
       <Route path="Tonalidades" element = {<Tonalidades />}></Route>
       <Route path="Movimientos" element = {<Movimientos />}></Route>
       <Route path="inventarioPlaza" element = {<InventarioPlaza />}></Route>
+      <Route path="agregarUsuario" element = {<AgregarUsuario />}></Route>
       <Route path="Ceremonias" element={ <Ceremonias /> }></Route>
     </Routes>
     </>

@@ -185,6 +185,7 @@ export const InventarioPlaza = () => {
       <TableRow>
         <TableCell align="center">Plaza</TableCell>
         <TableCell align="center">Clave Del Articulo</TableCell>
+        <TableCell align="center">Nombre Del Articulo</TableCell>
         <TableCell align="center">Cantidad</TableCell>
         <TableCell align="center">Costo</TableCell>
       </TableRow>
@@ -194,7 +195,7 @@ export const InventarioPlaza = () => {
         <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
             <TableCell align="center" colSpan={8}> <Skeleton /></TableCell>
         </TableRow>
-      :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({Plaza,Clave_Articulo,Cantidad,Costo}, idx) =>(
+      :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({Plaza,Clave_Articulo,Cantidad,Costo,Nombre_Articulo}, idx) =>(
         <TableRow
           key={idx}
           sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -202,6 +203,7 @@ export const InventarioPlaza = () => {
           
           <TableCell align="center">{Plaza}</TableCell>
           <TableCell align="center">{Clave_Articulo}</TableCell>
+          <TableCell align="center">{Nombre_Articulo}</TableCell>
           <TableCell align="center">{Cantidad}</TableCell>
           <TableCell align="center">{Costo}</TableCell>
           

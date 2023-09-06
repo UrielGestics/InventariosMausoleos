@@ -64,6 +64,7 @@ export const Plazas = () => {
   }
 
   useEffect(() => {
+    
       validarModoOscuro()
       obtenerPlazas()
       validarNotLoggedPage()

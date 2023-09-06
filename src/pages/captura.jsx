@@ -460,11 +460,11 @@ export const Captura = () => {
       <InputLabel >Cantidad</InputLabel>
           <FilledInput id="numberCantidad" type='number'/>
       </FormControl>
-      <hr />
+      {/* <hr />
       <FormControl fullWidth>
       <InputLabel >Costo</InputLabel>
           <FilledInput id="numberCosto" type='number'/>
-      </FormControl>
+      </FormControl> */}
       <hr />
       <div id='QRS'>
       {(arregloQR.length == 0) ?'' :
@@ -473,7 +473,8 @@ export const Captura = () => {
       })
       }
 </div>
-      {(arregloQR.length == 0) ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
+      {(arregloQR.length == 0) 
+      ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button> 
       : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}
      
 

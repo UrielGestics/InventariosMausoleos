@@ -23,7 +23,8 @@ const drawerWidth = 240;
 //50
 const arregloIconos = [(localStorage.tipo == 'Admin') ? 'bi bi-emoji-sunglasses' : '','bi bi-geo-alt','bi bi-file-bar-graph-fill','bi bi-wallet']
 const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
-const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
+// const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
+const arregloIconosInventarios = ['bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
 const arregloIconosConfiguraciones = ['bi bi-people','bi bi-person-x','bi bi-brightness-alt-high-fill','bi bi-box-seam','bi bi-palette','bi bi-paint-bucket']
 
 const mOscuro = localStorage.oscuro
@@ -169,7 +170,8 @@ const mostrarNotificaciones = () =>{
             {cambiartamano == 240 ? "Inventarios" : ""}
           </h4>
           <List>
-            {["Captura", "Recepción", "Consulta", "Movimientos"].map(
+            {/* {["Captura", "Recepción", "Consulta", "Movimientos"].map( */}
+            {["Recepción", "Consulta", "Movimientos"].map(
               (text, index) => (
                 <ListItem
                   key={text}

@@ -68,7 +68,7 @@ export const Home = () => {
         <Toolbar />
         <Button variant="contained" onClick={() => ira('/usuarios')} style={{height: '300px', width:'100%', backgroundColor: '#BAA247'}} size="large"><i style={{color:'white', fontSize: '150px'}} className="bi bi-people"></i></Button>
         <hr />
-        <Button variant="contained"  style={{height: '300px', width:'100%', backgroundColor: '#BAA247'}} size="large"><i style={{color:'white', fontSize: '150px'}} className="bi bi-card-checklist"></i></Button>
+        <Button variant="contained" onClick={() => ira('/articulos')}  style={{height: '300px', width:'100%', backgroundColor: '#BAA247'}} size="large"><i style={{color:'white', fontSize: '150px'}} className="bi bi-card-checklist"></i></Button>
       </Box>
     </Box>
         </ThemeProvider>

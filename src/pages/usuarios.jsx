@@ -9,14 +9,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 //MaterialUI
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import FilledInput from '@mui/material/FilledInput';
 import Button from '@mui/material/Button';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import Swal from 'sweetalert2';
 import TablePagination from "@mui/material/TablePagination";
 import SearchComponent from "react-material-ui-searchbar";
@@ -27,7 +20,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import CircularProgress from '@mui/material/CircularProgress';
 import Skeleton from '@mui/material/Skeleton';
 
 //Mis Componenetes
@@ -208,7 +200,7 @@ export const Usuarios = () => {
               <TableCell align="center">{Fecha_Registro}</TableCell>
               <TableCell align="center">{Estatus}</TableCell>
               <TableCell align="center">
-              <Button title='Editar' onClick={() => ira(ID)} key={`a${ID}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
+              <Button className='ms-3'  title='Editar' onClick={() => ira(ID)} key={`a${ID}`} variant="contained" color='warning' style={{color: 'white'}} size="small"><i className="bi bi-pencil-square"></i></Button>
               {(Estatus == 'Activo') ?  <Button className='ms-3' onClick={() => Deshabilitar(ID)} title='Deshabilitar' variant="contained" color='error' style={{color: 'white'}} size="small"><i className="bi bi-x-circle-fill"></i></Button>  :  <Button onClick={() => Habilitar(ID)} className='ms-3' title='Habilitar' variant="contained" color='success' style={{color: 'white'}} size="small"><i className="bi bi-check-circle-fill"></i></Button>}
               {/* <Button title='Ver Productos' key={`c${ID}`} variant="contained" color='primary' style={{color: 'white', marginLeft : '10px'}} size="small"><i className="bi bi-eye"></i></Button> */}
               </TableCell>

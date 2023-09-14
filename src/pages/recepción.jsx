@@ -17,7 +17,7 @@ import FilledInput from '@mui/material/FilledInput';
 import Button from '@mui/material/Button';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-
+import Grid from '@mui/material/Grid';
 
 //SweetAlert
 import Swal from 'sweetalert2';
@@ -83,7 +83,7 @@ export const Recepción = () => {
         validarNotLoggedPage()
         obtenerProveedores()
         obtenerPlazas()
-    })
+    }, [])
 
     const  validarNotLoggedPage = () => {
         if (localStorage.logged == undefined) {
@@ -129,9 +129,10 @@ setsucursalID(event.target.value)
 
 const cambioSelectPlazas = (event) =>{
   setplazasNombre(event.target.value)
-  fetch(`${apiURL}plazas.php?tipo=obtenerSucursalesPlazas&ID_Plaza=${event.target.value}`)
+  fetch(`${apiURL}plazas.php?tipo=obtenerTodasSucursalesPorPlazas&id=${event.target.value}`)
   .then(async(resp) =>{
     const finalresp = await resp.json();
+    
     setsucursales(finalresp[0])
   })
 }
@@ -236,8 +237,17 @@ setQRTexto(QR)
 }
 
 const imprimirQr = () =>{
-  var win = window.open('', '', 'height=700,width=700'); // Open the window. Its a popup window.
+//   let printContents = document.getElementById('QRS').innerHTML;
+//   let originalContents = document.body.innerHTML;
+//   document.body.innerHTML = printContents;
+//   window.print();
+//  document.body.innerHTML = originalContents; 
+  var win = window.open('', '', 'height=700,width=1000'); // Open the window. Its a popup window.
+  win.document.write('<html><head><title></title>');
+  win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />');
+  win.document.write('</head><body >');
       win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
+      win.document.write('</body></html>');
       win.document.close();
       win.print();
       win.addEventListener("afterprint", (event) => {
@@ -325,22 +335,24 @@ const imprimirQr = () =>{
           <FilledInput id="numberCosto" value={precio} disabled type='number'/>
       </FormControl>
       <hr />
-      <div id='QRS'>
+      <div id='QRS' className='row'>
       {(codQR.length == 0) ?'' :
       codQR.map(qr =>{
         return(
-        <div style={{marginLeft: '50px'}}>
-          <QRious class="mainImg" value={qr} size={250}  foreground='black' level='H'  />
-          <hr />
-          <p>{qRTexto.substr(7,2)}/{qRTexto.substr(5,2)}/{qRTexto.substr(1,4)}  {qRTexto.substr(9,2)}:{qRTexto.substr(11,2)}:{qRTexto.substr(13,2)}</p>
-        <p>{document.getElementById("selectArticuloProveedor").textContent}</p>
-        <p>{document.getElementById('ordenCompra').value}</p>
-        <p>${precio}</p>
-        <p>{document.getElementById("selectProveedor").textContent}</p>
-        <p>{document.getElementById("selectPlazas").textContent} - {document.getElementById("selectSucursales").textContent}</p>
-        <hr />
-        </div>
+        <div className='row' style={{marginBottom:'17px', marginLeft:'25px'}}>
+         
+         
+          <QRious className="mainImg col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6" value={qr} size={70}  foreground='black' level='H'  />
         
+          <label style={{marginLeft:'-15px'}} className="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-xxl-5">
+            
+          {qr}
+          <br />
+          {document.getElementById("selectArticuloProveedor").textContent} 
+        </label>
+         
+        
+         </div>
         )
       })
       }

@@ -75,7 +75,7 @@ export const InventarioPlaza = () => {
     useEffect(() => {
         validarNotLoggedPage()
         obtenerPlazas()
-    })
+    }, [])
 
     const  validarNotLoggedPage = () => {
         if (localStorage.logged == undefined) {

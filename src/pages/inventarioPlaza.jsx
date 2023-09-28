@@ -84,9 +84,10 @@ export const InventarioPlaza = () => {
     }
 
     const obtenerarticulos = () =>{
-        fetch(`${apiURL}articulos.php?tipo=obtenerArticulosAgrupados`)
+        fetch(`${apiURL}articulos.php?plazaUsario=${localStorage.id}&tipo=obtenerArticulosAgrupadosPorPlazaUsuario`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
+            console.log(finalResp[0])
             setarticulos(finalResp[0])
             setCargandoarticulos(true)
             setarticulosCopia(finalResp[0])
@@ -111,7 +112,7 @@ export const InventarioPlaza = () => {
     }
 
     const obtenerCostoTotalArticulos = () =>{
-        fetch(`${apiURL}articulos.php?tipo=obtenerCostoTotalArticulos`)
+        fetch(`${apiURL}articulos.php?tipo=obtenerCostoTotalArticulosPorPlazaUsuario&plazaUsario=${localStorage.id}`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
             setTotalArticulos(finalResp[0][0].Suma)
@@ -188,6 +189,7 @@ export const InventarioPlaza = () => {
         <TableCell align="center">Nombre Del Articulo</TableCell>
         <TableCell align="center">Cantidad</TableCell>
         <TableCell align="center">Costo</TableCell>
+        <TableCell align="center">Total</TableCell>
       </TableRow>
     </TableHead>
     <TableBody>
@@ -205,8 +207,8 @@ export const InventarioPlaza = () => {
           <TableCell align="center">{Clave_Articulo}</TableCell>
           <TableCell align="center">{Nombre_Articulo}</TableCell>
           <TableCell align="center">{Cantidad}</TableCell>
-          <TableCell align="center">{Costo}</TableCell>
-          
+          <TableCell align="center">${Costo}</TableCell>
+          <TableCell align="center">${Cantidad * Costo}</TableCell>
         </TableRow>
       ))
       

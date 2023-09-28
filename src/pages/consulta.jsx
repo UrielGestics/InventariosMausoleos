@@ -27,7 +27,7 @@ import Skeleton from '@mui/material/Skeleton';
 //SweetAlert
 import Swal from 'sweetalert2';
 
-
+import { QRious } from 'react-qrious'
 
 
 //Funciones Propias
@@ -43,6 +43,8 @@ export const Consulta = () => {
     const [cargandoarticulos, setCargandoarticulos] = useState(false)
     const [pg, setpg] = React.useState(0);
     const [rpg, setrpg] = React.useState(5);
+    const [QR, setQR] = useState('')
+    const [nombre, setnombre] = useState('')
     const darkTheme = createTheme({
         palette: {
             mode: obscuro,
@@ -77,7 +79,7 @@ export const Consulta = () => {
     }
 
     const obtenerarticulos = () =>{
-        fetch(`${apiURL}articulos.php?tipo=obtenerTodosArticulos`)
+        fetch(`${apiURL}articulos.php?tipo=obtenerTodosArticulosPorUsuarioSucursal&plazaUsario=${localStorage.id}`)
         .then(async(resp) =>{
             const finalResp = await resp.json();
             setarticulos(finalResp[0])
@@ -106,6 +108,32 @@ export const Consulta = () => {
         }
       }
 
+      const mostrarQR = (QR,nombre) =>{
+        Swal.showLoading()
+        document.getElementById("QRS").hidden = false
+        setQR(QR)
+        setnombre(nombre)
+        
+      setTimeout(() => {
+        var win = window.open('', '', 'height=700,width=1000'); // Open the window. Its a popup window.
+    win.document.write('<html><head><title></title>');
+    //win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />');
+    win.document.write('</head><style>label{font-size:6.3px !important}</style><style>.etiqueta{margin-right:-1cm !important}</style></body>');
+        win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
+        win.document.write('</body></html>');
+        win.document.close();
+        win.print();
+        win.addEventListener("afterprint", (event) => {
+  
+            setTimeout(() => {
+  
+                window.location.reload()
+            }, 1000);
+        })
+      }, 100);
+  
+      }
+
     return (
         <ThemeProvider theme={darkTheme} >
         <CssBaseline />
@@ -127,6 +155,7 @@ export const Consulta = () => {
             <TableCell align="center">Estatus</TableCell>
             <TableCell align="center">Plaza</TableCell>
             <TableCell align="center">Sucursal</TableCell>
+            <TableCell align="center">Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -134,7 +163,7 @@ export const Consulta = () => {
             <TableRow key='Skeleton' sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell align="center" colSpan={8}> <Skeleton /></TableCell>
             </TableRow>
-          :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({Estatus,Clave_Articulo,Nombre_Articulo,Plaza,Nombre_Sucursal}) =>(
+          :(articulos!=undefined) ? articulos.slice(pg * rpg, pg * rpg + rpg).map(({Estatus,Clave_Articulo,Nombre_Articulo,Plaza,Nombre_Sucursal,Codigo_QR}) =>(
             <TableRow
               key={Clave_Articulo}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -145,7 +174,7 @@ export const Consulta = () => {
               <TableCell align="center">{Estatus}</TableCell>
               <TableCell align="center">{Plaza}</TableCell>
               <TableCell align="center">{Nombre_Sucursal}</TableCell>
-              
+              <TableCell align="center"><Button className='ms-3' title='MostrarQR' onClick={() =>mostrarQR(Codigo_QR,Nombre_Articulo)} variant="contained" color='info' style={{color: 'white'}} size="small"><i className="bi bi-printer-fill"></i></Button></TableCell>
             </TableRow>
           )) : 
           <TableRow
@@ -177,6 +206,17 @@ export const Consulta = () => {
             onRowsPerPageChange={handleChangeRowsPerPage}
         />}
        </Table>
+       <div hidden id='QRS' className='etiqueta' style={{ height:'1.563cm'}}>
+       <QRious style={{width:'1.3cm',float: 'left'}} value={QR}  foreground='black' level='H'  />
+       
+       <label  style={{width:'1.6cm', marginRight:'0.1cm',  marginTop:'6px', float: 'left'}} >
+       {QR}
+       <br />
+       {nombre} 
+     </label>
+    
+      </div>
+
     </TableContainer>
       
       </Box>

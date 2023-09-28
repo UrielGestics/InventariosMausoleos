@@ -29,7 +29,7 @@ export const Login = () => {
 
     useEffect(() => {
       if(localStorage.logged){
-        navigate('/inicio')
+        navigate('/Consulta')
       }
     })
     
@@ -108,7 +108,7 @@ const iniciarSesion = () =>{
         localStorage.PMovimientos = finalResp[0][0].PMovimientos;
         localStorage.PCatalogos = finalResp[0][0].PCatalogos;
         localStorage.logged = true;
-        navigate('/inicio')
+        navigate('/Consulta')
       }
     })
   }else{

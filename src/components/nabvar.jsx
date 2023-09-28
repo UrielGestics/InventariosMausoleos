@@ -21,17 +21,16 @@ import { Height } from '@mui/icons-material';
 
 const drawerWidth = 240;
 //50
-const arregloIconos = [(localStorage.tipo == 'Admin') ? 'bi bi-emoji-sunglasses' : '','bi bi-geo-alt','bi bi-file-bar-graph-fill','bi bi-wallet']
-const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
-// const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
-const arregloIconosInventarios = ['bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
-const arregloIconosConfiguraciones = ['bi bi-people','bi bi-person-x','bi bi-brightness-alt-high-fill','bi bi-box-seam','bi bi-palette','bi bi-paint-bucket']
+
+
+
 
 const mOscuro = localStorage.oscuro
 
 export const Nabvar = ({active}) => {
 
   const [cambiartamano, setcambiartamano] = useState(50)
+  const [usuario, setusuario] = useState('')
 
   const navigate = useNavigate();
 
@@ -45,8 +44,26 @@ export const Nabvar = ({active}) => {
 
   useEffect(() => {
     validarDispositivo()
+    obtenerPermisos()
   }, [])
   
+  const obtenerPermisos = ()=>{
+    fetch(`${apiURL}usuarios.php?tipo=obtenerTodosUsuariosPorID&ID=${localStorage.id}`)
+.then(async(resp) =>{
+  const finalResp = await resp.json()
+  setusuario(finalResp[0]['0'])
+
+  if(finalResp[0]['0'].Estatus != 'Activo'){
+    delete localStorage.logged;
+    delete localStorage.id;
+    delete localStorage.tipo;
+    navigate('/login')
+  }else{
+    console.log('No hacer nada')
+  }
+  
+})
+  }
 
 const irAPag = (text) =>{
   if(text == 'Salir'){
@@ -92,6 +109,12 @@ const mostrarNotificaciones = () =>{
   fetch(`${apiURL}movimientos.php?tipo=mostrarNotificacionesAdmin`)
 }
 
+const arregloIconos = [(usuario.PAdministrador == 'true') ? 'bi bi-emoji-sunglasses' : '', (usuario.PTodasPlazas == 'true') ? 'bi bi-geo-alt' : '', (usuario.PReportes == 'true') ? 'bi bi-file-bar-graph-fill' : '',(usuario.PInvetarioPlaza == 'true') ? 'bi bi-wallet' : '']
+const arregloIconos2 = ['','bi bi-person-badge','bi bi-door-closed']
+// const arregloIconosInventarios = ['bi bi-card-checklist','bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
+const arregloIconosInventarios = ['bi bi-mailbox2','bi bi-search','bi bi-arrow-down-up']
+const arregloIconosConfiguraciones = ['bi bi-people','bi bi-person-x','bi bi-brightness-alt-high-fill','bi bi-box-seam','bi bi-palette','bi bi-paint-bucket']
+
   return (
     <>
       <AppBar
@@ -130,9 +153,9 @@ const mostrarNotificaciones = () =>{
             {cambiartamano == 240 ? "Principal" : ""}
           </h4>
           <List>
-            {[(localStorage.tipo == 'Admin') ? "Administrador" : '', "Plazas", "Reportes", "Inventario Plaza"].map(
+            {[(usuario.PAdministrador == 'true') &&  "Administrador" , (usuario.PTodasPlazas == 'true') &&  "Plazas", (usuario.PReportes == 'true') &&  "Reportes" , (usuario.PInvetarioPlaza == 'true') &&  "Inventario Plaza"].map(
               (text, index) => (
-                <ListItem
+                (text == '') ? '' :<ListItem
                   key={text}
                   disablePadding
                   onClick={() => (localStorage.tipo != 'Admin' && text == '') ? irAPag('Plazas') :  irAPag(text)}
@@ -171,9 +194,9 @@ const mostrarNotificaciones = () =>{
           </h4>
           <List>
             {/* {["Captura", "Recepción", "Consulta", "Movimientos"].map( */}
-            {["Recepción", "Consulta", "Movimientos"].map(
+            {[(usuario.PRecepcion == 'true') && "Recepción", (usuario.PConsulta == 'true') && "Consulta", (usuario.PMovimientos == 'true') && "Movimientos"].map(
               (text, index) => (
-                <ListItem
+                (text == '') ? '' : <ListItem
                   key={text}
                   disablePadding
                   onClick={() => irAPag(text)}
@@ -205,19 +228,19 @@ const mostrarNotificaciones = () =>{
             )}
           </List>
           <Divider />
-          <h4 style={{ textAlign: "center" }}>
+         {(usuario.PCatalogos == 'false') ? '' : <h4 style={{ textAlign: "center" }}>
             {cambiartamano == 240 ? "Catalogos" : ""}
-          </h4>
+          </h4> } 
           <List>
             {[
-              "Proveedores",
-              "Proveedores Deshabilitados",
+             (usuario.PCatalogos == 'true') && "Proveedores",
+             (usuario.PCatalogos == 'true') && "Proveedores Deshabilitados",
               //"Ceremonias",
               //"Materiales",
               //"Colores",
               //"Tonalidades",
             ].map((text, index) => (
-              <ListItem
+              (text == '') ? '' : <ListItem
                 key={text}
                 disablePadding
                 onClick={() => irAPag(text)}

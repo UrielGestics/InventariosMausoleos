@@ -118,7 +118,7 @@ const cambioSelectProveedoresArituclos = (event) =>{
   fetch(`${apiURL}proveedores.php?tipo=buscarDatosArtProveedor&nombre=${event.target.value}`)
   .then(async(resp) =>{
     const finalresp = await resp.json();
-    setprecio(finalresp[0][0].Precio)
+    setprecio('$'+finalresp[0][0].Precio)
   })
 
 }
@@ -145,33 +145,14 @@ const obtenerPlazas = () =>{
 }
 
 const generarCaptura = () =>{
-  if( proveedoresNombre == ''
-     || artProveedoresNombre == '' ){
+  if(plazasNombre == '' || sucursalID == '' || proveedoresNombre == '' || artProveedoresNombre == '' || document.getElementById('ordenCompra').value == '' || document.getElementById('numberCantidad').value  == '' || document.getElementById('numberCantidad').value <1){
       Swal.fire(
           'error',
           'Tienes que llenar todos los campos',
           'error'
         )
   }else{
-      let timerInterval
-      Swal.fire({
-        title: 'Cargando',
-        html: `<div className="spinner-border" role="status">
-        <span className="sr-only">Loading...</span>
-      </div>`,
-        timer: 2000,
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading()
-
-          timerInterval = setInterval(() => {
-
-          }, 100)
-        },
-        willClose: () => {
-          clearInterval(timerInterval)
-        }
-      }).then((result) => {})
+    Swal.showLoading()
 
                for(let i = 1; i<=document.getElementById('numberCantidad').value; i++){
               let formData = new FormData();
@@ -244,8 +225,8 @@ const imprimirQr = () =>{
 //  document.body.innerHTML = originalContents; 
   var win = window.open('', '', 'height=700,width=1000'); // Open the window. Its a popup window.
   win.document.write('<html><head><title></title>');
-  win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />');
-  win.document.write('</head><body >');
+  //win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />');
+  win.document.write('</head><style>label{font-size:6.3px !important}</style><style>.etiqueta{margin-right:-1cm !important}</style></body>');
       win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
       win.document.write('</body></html>');
       win.document.close();
@@ -332,30 +313,45 @@ const imprimirQr = () =>{
       <hr />
       <FormControl fullWidth>
       <InputLabel >Precio</InputLabel>
-          <FilledInput id="numberCosto" value={precio} disabled type='number'/>
+          <FilledInput id="numberCosto" value={precio} disabled type='text'/>
       </FormControl>
       <hr />
-      <div id='QRS' className='row'>
+      <div id='QRS'>
       {(codQR.length == 0) ?'' :
       codQR.map(qr =>{
         return(
-        <div className='row' style={{marginBottom:'17px', marginLeft:'25px'}}>
-         
-         
-          <QRious className="mainImg col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6" value={qr} size={70}  foreground='black' level='H'  />
+          // 
+
+          <div className='etiqueta' style={{ height:'1.563cm'}}>
+           <QRious style={{width:'1.3cm',float: 'left'}} value={qr}  foreground='black' level='H'  />
+       
+           <label  style={{width:'1.6cm', marginRight:'0.1cm',  marginTop:'6px', float: 'left'}} >
+           {qr}
+           <br />
+           {document.getElementById("selectArticuloProveedor").textContent} 
+         </label>
         
-          <label style={{marginLeft:'-15px'}} className="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-xxl-5">
-            
-          {qr}
-          <br />
-          {document.getElementById("selectArticuloProveedor").textContent} 
-        </label>
-         
-        
-         </div>
+          </div>
+
+
+        // <div style={{marginBottom:'0px', marginLeft:'38px'}}>
+        //  <label>Inicio Etiqueta</label>
+        //  <div  >
+        //   <QRious className='mainImg' value={qr} size={57} style={{marginLeft:'14px'}} foreground='black' level='H'  />
+        //  </div>
+        // <div style={{width:'95px'}}>
+        //   <label  style={{ marginTop:'-43px', marginLeft:'62px', fontSize:'2px'}} >
+        //   {qr}
+        //   <br />
+        //   {document.getElementById("selectArticuloProveedor").textContent} 
+        // </label>
+        // </div>
+       
+        //  </div>
         )
       })
       }
+      
 </div>
       {(codQR.length == 0) ? <Button onClick={generarCaptura} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Guardar</b></Button>
       : <Button onClick={imprimirQr} className={(mOscuro == 'true') ? 'btnMausoleosPrimaryDark' : 'btnMausoleosPrimaryLight'} style={{width: '100%'}} size="large"><b>Imprimir</b></Button>}

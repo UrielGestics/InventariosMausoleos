@@ -116,7 +116,8 @@ export const Articulos = () => {
             obtenerTodosArticulos()
         }else{
             const filteredRows = articulosCopia.filter((row) => {
-                return row.Nombre_Articulo.toLowerCase().includes(texto.toLowerCase())
+              console.log(row)
+                return row.Nombre_Articulo.toLowerCase().includes(texto.toLowerCase()) || row.Codigo_QR.toLowerCase().includes(texto.toLowerCase()) || row.Nombre_Proveedor.toLowerCase().includes(texto.toLowerCase()) || row.Plaza.toLowerCase().includes(texto.toLowerCase()) || row.Nombre_Sucursal.toLowerCase().includes(texto.toLowerCase()) || row.Orden_Compra.toLowerCase().includes(texto.toLowerCase())
               });
               setarticulos(filteredRows)
         }
@@ -194,20 +195,20 @@ export const Articulos = () => {
       
     setTimeout(() => {
       var win = window.open('', '', 'height=700,width=1000'); // Open the window. Its a popup window.
-      win.document.write('<html><head><title></title>');
-      win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />');
-      win.document.write('</head><body >');
-          win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
-          win.document.write('</body></html>');
-          win.document.close();
-          win.print();
-          win.addEventListener("afterprint", (event) => {
-    
-              setTimeout(() => {
-                document.getElementById("QRS").hidden = true
-                  Swal.close()
-              }, 1000);
-          })
+  win.document.write('<html><head><title></title>');
+  //win.document.write('<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />');
+  win.document.write('</head><style>label{font-size:6.3px !important}</style><style>.etiqueta{margin-right:-1cm !important}</style></body>');
+      win.document.write(document.getElementById("QRS").outerHTML);     // Write contents in the new window.
+      win.document.write('</body></html>');
+      win.document.close();
+      win.print();
+      win.addEventListener("afterprint", (event) => {
+
+          setTimeout(() => {
+
+              window.location.reload()
+          }, 1000);
+      })
     }, 100);
 
     }
@@ -295,14 +296,16 @@ export const Articulos = () => {
         />}
        </Table>
 
-       <div hidden id='QRS' className='row' style={{marginBottom:'17px', marginLeft:'25px'}}>
-          <QRious className="mainImg col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 col-xxl-6" value={QR} size={70}  foreground='black' level='H'  />
-          <label style={{marginLeft:'-15px'}} className="col-xs-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-xxl-5">  
-          {QR}
-          <br />
-          {nombre} 
-        </label>
-         </div>
+       <div hidden id='QRS' className='etiqueta' style={{ height:'1.563cm'}}>
+       <QRious style={{width:'1.3cm',float: 'left'}} value={QR}  foreground='black' level='H'  />
+       
+       <label  style={{width:'1.6cm', marginRight:'0.1cm',  marginTop:'6px', float: 'left'}} >
+       {QR}
+       <br />
+       {nombre} 
+     </label>
+    
+      </div>
 
     </TableContainer>
       </Box>

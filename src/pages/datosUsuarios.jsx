@@ -402,12 +402,12 @@ export const DatosUsuarios = () => {
   <FormGroup>
   <FormControlLabel  control={<Switch onChange={cambioSwitchPAdministrador} value={PAdministrador} checked={PAdministrador} />} label="Panel De Administración" />
   <FormControlLabel control={<Switch onChange={cambioSwitchPTodasPlazas} value={PTodasPlazas} checked={PTodasPlazas} />} label="Todas Las Plazas" />
-  <FormControlLabel control={<Switch onChange={cambioSwitchPTodasSucursales} value={PTodasSucursales} checked={PTodasSucursales} />} label="Reportes" />
-  <FormControlLabel control={<Switch onChange={cambioSwitchPReportes} value={PReportes} checked={PReportes} />} label="Todas Las Sucursales" />
+  <FormControlLabel control={<Switch onChange={cambioSwitchPReportes} value={PReportes} checked={PReportes} />} label="Reportes" />
+  <FormControlLabel control={<Switch onChange={cambioSwitchPTodasSucursales} value={PTodasSucursales} checked={PTodasSucursales} />} label="Todas Las Sucursales" />
   <FormControlLabel control={<Switch onChange={cambioSwitchPInvetarioPlaza} value={PInvetarioPlaza} checked={PInvetarioPlaza} />} label="Inventario Plaza" />
-  <FormControlLabel control={<Switch onChange={cambioSwitchPCaptura} value={PCaptura} checked={PCaptura} />} label="Captura" />
+  {/* <FormControlLabel control={<Switch onChange={cambioSwitchPCaptura} value={PCaptura} checked={PCaptura} />} label="Captura" /> */}
   <FormControlLabel control={<Switch onChange={cambioSwitchPRecepcion} value={PRecepcion} checked={PRecepcion} />} label="Recepción" />
-  <FormControlLabel control={<Switch onChange={cambioSwitchPConsulta} value={PConsulta} checked={PConsulta} />} label="Consulta" />
+  {/* <FormControlLabel control={<Switch onChange={cambioSwitchPConsulta} value={PConsulta} checked={PConsulta} />} label="Consulta" /> */}
   <FormControlLabel control={<Switch onChange={cambioSwitchPMovimientos} value={PMovimientos} checked={PMovimientos} />} label="Movimientos" />
   <FormControlLabel control={<Switch onChange={cambioSwitchPCatalogos} value={PCatalogos} checked={PCatalogos} />} label="Catálogos" />
          
